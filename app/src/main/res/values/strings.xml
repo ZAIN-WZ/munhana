@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">منحنى</string>
+    <string name="app_tagline">راسم الدوال والمعادلات</string>
+
+    <string name="add_equation">إضافة معادلة</string>
+    <string name="from_image">من صورة</string>
+    <string name="camera">الكاميرا</string>
+    <string name="gallery">المعرض</string>
+    <string name="choose_source">اختر مصدر الصورة</string>
+
+    <string name="crop_title">قص المعادلة</string>
+    <string name="crop_hint">حرّك المستطيل أو اسحب زواياه لتحديد المعادلات، ثم اضغط استخراج</string>
+    <string name="single_line">سطر واحد فقط (معادلة واحدة)</string>
+    <string name="manual_short">يدويًا</string>
+    <string name="extract">استخراج المعادلات</string>
+    <string name="reset_crop">إعادة الضبط</string>
+    <string name="searching">جارٍ التعرف على المعادلات…</string>
+    <string name="recognize_empty">لم يتم العثور على معادلات واضحة في المنطقة المحددة. جرّب تقريب الصورة أو تحديد منطقة أصغر.</string>
+    <string name="found_title">المعادلات المكتشفة</string>
+    <string name="found_subtitle">عدّل النص إن لزم، وأزل ما لا تريده</string>
+    <string name="select_all">تحديد الكل</string>
+    <string name="add_selected">إضافة المحدد</string>
+    <string name="scan_failed">تعذر التعرف على الصورة</string>
+    <string name="camera_error">تعذر فتح الكاميرا</string>
+    <string name="image_error">تعذر تحميل الصورة</string>
+
+    <string name="add">إضافة</string>
+    <string name="save">حفظ</string>
+    <string name="cancel">إلغاء</string>
+    <string name="delete">حذف</string>
+    <string name="edit">تعديل</string>
+    <string name="done">تم</string>
+    <string name="clear_all">مسح الكل</string>
+    <string name="clear_confirm">هل تريد مسح كل المعادلات؟</string>
+    <string name="about">حول التطبيق</string>
+    <string name="about_text">منحنى — راسم دوال عربي بواجهة داكنة وتدرجات بنفسجية.\n\nيدعم الدوال الصريحة مثل y = x^2، والمعادلات الضمنية مثل x^2 + y^2 = 25، والمتباينات، مع تقريب وتمرير باللمس. يمكنك أيضًا استخراج المعادلات من صورة قديمة أو لقطة كاميرا مباشرة عبر تحديد مستطيل حول المعادلات.</string>
+    <string name="zoom_in">تقريب</string>
+    <string name="zoom_out">إبعاد</string>
+    <string name="reset_view">إعادة ضبط العرض</string>
+
+    <string name="empty_title">لا توجد معادلات بعد</string>
+    <string name="empty_subtitle">أضف معادلة يدويًا أو استخرجها من صورة</string>
+    <string name="equation_hint">مثال: y = x^2 - 4</string>
+    <string name="invalid_equation">معادلة غير صالحة</string>
+    <string name="equation_label">معادلة</string>
+    <string name="equations_panel">المعادلات</string>
+    <string name="back">رجوع</string>
+    <string name="dialog_examples">أمثلة:  y = x^2  •  y = 3 sin(x)  •  x^2 + y^2 = 25  •  y &gt; x</string>
+    <string name="preparing_ocr">جارٍ تهيئة محرك قراءة النصوص…</string>
+    <string name="ocr_init_failed">تعذر تهيئة محرك قراءة النصوص</string>
+    <string name="visible">إظهار</string>
+    <string name="hidden">إخفاء</string>
+    <string name="more">المزيد</string>
+    <string name="capture_photo">التقاط صورة</string>
+    <string name="pick_image">اختيار من المعرض</string>
+    <string name="quick_examples">أمثلة سريعة</string>
+    <string name="example_parabola">y = x^2</string>
+    <string name="example_sine">y = 3 sin(x)</string>
+    <string name="example_circle">x^2 + y^2 = 25</string>
+    <string name="paragraph_hint">المعادلات المستخرجة تُضاف تلقائيًا إلى القائمة.</string>
+
+    <!-- graph settings -->
+    <string name="graph_settings">إعدادات الرسم</string>
+    <string name="graph_settings_hint">تحكم في الشبكة والمحاور والمدى ووحدات الزوايا</string>
+    <string name="section_grid">الشبكة والمحاور</string>
+    <string name="opt_grid">إظهار الشبكة</string>
+    <string name="opt_minor_grid">الخطوط الشبكية الصغيرة</string>
+    <string name="opt_axis_numbers">أرقام المحاور</string>
+    <string name="opt_arrows">الأسهم</string>
+    <string name="opt_x_axis">محور X</string>
+    <string name="opt_y_axis">محور Y</string>
+    <string name="section_window">مدى العرض</string>
+    <string name="apply_window">تطبيق المدى</string>
+    <string name="window_invalid">مدى غير صالح</string>
+    <string name="section_units">وحدات الزوايا</string>
+    <string name="radians">راديان</string>
+    <string name="degrees">درجات</string>
+    <string name="section_display">العرض</string>
+    <string name="opt_projector">وضع العرض المكبّر</string>
+    <string name="reset_defaults">الافتراضي</string>
+
+    <!-- keyboard -->
+    <string name="keyboard_basic">أساسي</string>
+    <string name="keyboard_functions">الدوال</string>
+    <string name="keyboard_calculus">التفاضل والتكامل</string>
+    <string name="keyboard_advanced">متقدم</string>
+    <string name="keyboard_stats">إحصاء</string>
+    <string name="keyboard_matrix">مصفوفات</string>
+    <string name="keyboard_geometry">هندسة</string>
+    <string name="keyboard_distributions">توزيعات</string>
+    <string name="keyboard_trig">الدوال المثلثية</string>
+    <string name="keyboard_inverse_trig">الدوال المثلثية العكسية</string>
+    <string name="keyboard_hyperbolic">الزائدية</string>
+    <string name="keyboard_common">دوال شائعة</string>
+    <string name="keyboard_numbers">الأرقام والعمليات</string>
+    <string name="keyboard_letters">المتغيرات</string>
+    <string name="keyboard_constants">الثوابت</string>
+    <string name="keyboard_combinatorics">التوافيق والتباديل</string>
+    <string name="keyboard_number_theory">نظرية الأعداد</string>
+    <string name="keyboard_statistics">الإحصاء</string>
+    <string name="keyboard_calculus_keys">التفاضل والتكامل</string>
+    <string name="keyboard_matrix_keys">المصفوفات والمتجهات</string>
+    <string name="keyboard_geometry_keys">الهندسة والألوان</string>
+    <string name="keyboard_probability">التوزيعات والاحتمالات</string>
+    <string name="show_keyboard">لوحة الرياضيات</string>
+    <string name="hide_keyboard">إخفاء اللوحة</string>
+    <string name="system_keyboard">لوحة المفاتيح</string>
+    <string name="keyboard_clear">مسح</string>
+
+    <!-- export -->
+    <string name="export_image">تصدير صورة الرسم</string>
+    <string name="export_text">تصدير المعادلات كنص</string>
+    <string name="share">مشاركة</string>
+    <string name="share_graph">مشاركة الرسم البياني</string>
+    <string name="import_equations">استيراد معادلات</string>
+    <string name="export_failed">تعذر التصدير</string>
+    <string name="export_ready">تم حفظ الملف</string>
+    <string name="export_empty">لا توجد معادلات للتصدير</string>
+    <string name="import_failed">تعذر استيراد الملف</string>
+
+    <!-- OCR / manual -->
+    <string name="manual_entry">إدخال المعادلة يدويًا</string>
+    <string name="handwriting_title">ملاحظات مكتوبة بخط اليد</string>
+    <string name="handwriting_hint">يعمل التعرف تلقائيًا مع الصور المطبوعة والملاحظات الممسوحة. إن لم تظهر النتيجة، استخدم الإدخال اليدوي أو عدّل النص بعد الاستخراج.</string>
+    <string name="ocr_tip">نصيحة: صوّر الورقة بإضاءة جيدة وحدّد سطر المعادلة فقط.</string>
+</resources>

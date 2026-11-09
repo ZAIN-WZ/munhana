@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Munhana" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:colorPrimary">@color/purple</item>
+        <item name="android:colorPrimaryDark">@color/bg</item>
+        <item name="android:colorAccent">@color/purple_light</item>
+        <item name="android:colorBackground">@color/bg</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:navigationBarColor">@color/bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorHint">#7A6A93</item>
+        <item name="android:alertDialogTheme">@style/Theme.Munhana.Dialog</item>
+        <item name="android:popupMenuStyle">@style/Popup.Munhana</item>
+    </style>
+
+    <style name="Theme.Munhana.Dialog" parent="@android:style/Theme.Material.Dialog.Alert">
+        <item name="android:colorAccent">@color/purple_light</item>
+        <item name="android:colorBackground">@color/surface_high</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:windowBackground">@drawable/bg_dialog</item>
+    </style>
+
+    <style name="Popup.Munhana" parent="@android:style/Widget.Material.PopupMenu">
+        <item name="android:popupBackground">@drawable/bg_dialog</item>
+    </style>
+
+    <style name="Munhana.Label" parent="">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Munhana.Title" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Munhana.Setting" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:buttonTint">@color/purple_light</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="Munhana.Range" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">#7A6A93</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textDirection">ltr</item>
+        <item name="android:inputType">numberDecimal|numberSigned</item>
+        <item name="android:importantForAutofill">no</item>
+    </style>
+</resources>

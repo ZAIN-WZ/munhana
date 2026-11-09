@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg"
+    android:fitsSystemWindows="true"
+    android:layoutDirection="rtl">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="18dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="6dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@color/purple_light"
+                android:textSize="23sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_tagline"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnSettings"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginEnd="2dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/graph_settings"
+            android:src="@drawable/ic_settings"
+            android:tint="@color/purple_light" />
+
+        <ImageButton
+            android:id="@+id/btnMore"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/more"
+            android:src="@drawable/ic_more"
+            android:tint="@color/purple_light" />
+    </LinearLayout>
+
+    <!-- Graph -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.15"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="4dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_card">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.munhana.graph.graph.GraphView
+                android:id="@+id/graphView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="2dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/btnZoomIn"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/bg_control"
+                    android:contentDescription="@string/zoom_in"
+                    android:src="@drawable/ic_zoom_in" />
+
+                <ImageButton
+                    android:id="@+id/btnZoomOut"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="6dp"
+                    android:background="@drawable/bg_control"
+                    android:contentDescription="@string/zoom_out"
+                    android:src="@drawable/ic_zoom_out" />
+
+                <ImageButton
+                    android:id="@+id/btnFit"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:background="@drawable/bg_control"
+                    android:contentDescription="@string/reset_view"
+                    android:src="@drawable/ic_fit" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:layout_margin="12dp"
+                android:text="@string/paragraph_hint"
+                android:textColor="#887A6A93"
+                android:textSize="10sp" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- Equations panel -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="12dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_card">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/equations_panel"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:text="0"
+                android:textColor="@color/purple_light"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ScrollView
+                android:id="@+id/scrollEquations"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:clipToPadding="false"
+                android:paddingBottom="6dp">
+
+                <LinearLayout
+                    android:id="@+id/listContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="8dp" />
+            </ScrollView>
+
+            <LinearLayout
+                android:id="@+id/emptyState"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="20dp">
+
+                <ImageView
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    android:alpha="0.55"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_function" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/empty_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/empty_subtitle"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <Button
+                android:id="@+id/btnAdd"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_btn_primary"
+                android:text="@string/add_equation"
+                android:textAllCaps="false"
+                android:textColor="#160B24"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:drawableStart="@drawable/ic_add"
+                android:drawableTint="#160B24"
+                android:drawablePadding="6dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp" />
+
+            <Button
+                android:id="@+id/btnImage"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_btn_tonal"
+                android:text="@string/from_image"
+                android:textAllCaps="false"
+                android:textColor="@color/purple_light"
+                android:textSize="13sp"
+                android:drawableStart="@drawable/ic_camera"
+                android:drawableTint="@color/purple_light"
+                android:drawablePadding="6dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
