@@ -11,6 +11,9 @@ dark purple theme. **Built with AI.**
 - Export the graph as PNG, export equations as TXT, share and import.
 - Works fully offline and needs no storage permission.
 
+![Munhana home screen](docs/screenshots/home.png)
+![Equation editor](docs/screenshots/editor.png)
+
 **Requirements:** Android 7.0 (API 24) or newer, `arm64-v8a` or `armeabi-v7a`.
 
 **Download:** see [Releases](https://github.com/ZAIN-WZ/munhana/releases).
