@@ -23,7 +23,6 @@ import android.widget.Toast;
 
 import com.munhana.graph.EquationEditActivity;
 import com.munhana.graph.R;
-import com.munhana.graph.math.Equation;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -141,9 +140,12 @@ public class CropActivity extends Activity {
         if (cropped == null) return;
         final boolean singleLine = cbSingleLine.isChecked();
         setBusy(true);
+        status.setText(R.string.searching);
+        status.setVisibility(View.VISIBLE);
 
         new Thread(() -> {
             if (!MathOcr.init(this)) {
+                cropped.recycle();
                 runOnUiThread(() -> {
                     setBusy(false);
                     new AlertDialog.Builder(this, R.style.Theme_Munhana_Dialog)
@@ -155,6 +157,7 @@ public class CropActivity extends Activity {
                 return;
             }
             final List<String> found = MathOcr.recognize(this, cropped, singleLine);
+            cropped.recycle();
             runOnUiThread(() -> {
                 setBusy(false);
                 if (found.isEmpty()) {
@@ -235,10 +238,7 @@ public class CropActivity extends Activity {
                     if (!checks.get(i).isChecked()) continue;
                     String text = edits.get(i).getText().toString().trim();
                     if (text.isEmpty()) continue;
-                    try {
-                        Equation.parse(text);
-                        chosen.add(text);
-                    } catch (Exception ignored) { }
+                    chosen.add(text);
                 }
                 if (chosen.isEmpty()) {
                     Toast.makeText(this, R.string.recognize_empty, Toast.LENGTH_SHORT).show();

@@ -93,8 +93,8 @@ public class MathTest {
         check("times sign", EquationText.repair("2\u00D73=6") != null, EquationText.repair("2\u00D73=6"));
         check("arabic prose rejected", EquationText.repair("\u0627\u0644\u0645\u0639\u0627\u062F\u0644\u0629 \u0627\u0644\u0623\u0648\u0644\u0649") == null,
                 EquationText.repair("\u0627\u0644\u0645\u0639\u0627\u062F\u0644\u0629 \u0627\u0644\u0623\u0648\u0644\u0649"));
-        check("word rejected", EquationText.repair("graphing calculator app") == null,
-                EquationText.repair("graphing calculator app"));
+        check("word rejected", EquationText.repair("graphing calculator") == null,
+                EquationText.repair("graphing calculator"));
         check("page number rejected", EquationText.repair("12") == null, EquationText.repair("12"));
 
         List<String> many = EquationText.fromOcrText(

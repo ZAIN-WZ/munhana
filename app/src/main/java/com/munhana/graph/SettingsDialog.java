@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.munhana.graph.graph.GraphSettings;
 
-/** Graph settings panel. */
+/** Graph appearance and window settings panel. */
 public final class SettingsDialog {
 
     private SettingsDialog() { }
@@ -34,6 +34,7 @@ public final class SettingsDialog {
         CheckBox cbXAxis = root.findViewById(R.id.cbXAxis);
         CheckBox cbYAxis = root.findViewById(R.id.cbYAxis);
         CheckBox cbProjector = root.findViewById(R.id.cbProjector);
+        CheckBox cbPrettyVars = root.findViewById(R.id.cbPrettyVars);
         EditText etXMin = root.findViewById(R.id.etXMin);
         EditText etXMax = root.findViewById(R.id.etXMax);
         EditText etYMin = root.findViewById(R.id.etYMin);
@@ -61,6 +62,7 @@ public final class SettingsDialog {
             s.showXAxis = cbXAxis.isChecked();
             s.showYAxis = cbYAxis.isChecked();
             s.projector = cbProjector.isChecked();
+            s.prettyVariables = cbPrettyVars.isChecked();
             s.degrees = rbDegrees.isChecked();
             push.run();
         };
@@ -71,6 +73,7 @@ public final class SettingsDialog {
         cbXAxis.setOnClickListener(toggles);
         cbYAxis.setOnClickListener(toggles);
         cbProjector.setOnClickListener(toggles);
+        cbPrettyVars.setOnClickListener(toggles);
         rbRadians.setOnClickListener(toggles);
         rbDegrees.setOnClickListener(toggles);
 
@@ -98,10 +101,11 @@ public final class SettingsDialog {
             s.showGrid = true; s.showMinorGrid = true; s.showAxisNumbers = true;
             s.showArrows = true; s.showXAxis = true; s.showYAxis = true;
             s.degrees = false; s.projector = false;
+            s.prettyVariables = true;
             GraphSettings.resetWindow(s);
             cbGrid.setChecked(true); cbMinor.setChecked(true); cbNumbers.setChecked(true);
             cbArrows.setChecked(true); cbXAxis.setChecked(true); cbYAxis.setChecked(true);
-            cbProjector.setChecked(false); rbRadians.setChecked(true);
+            cbProjector.setChecked(false); cbPrettyVars.setChecked(true); rbRadians.setChecked(true);
             fillWindow(etXMin, etXMax, etYMin, etYMax, s);
             updating[0] = false;
             push.run();
@@ -110,7 +114,7 @@ public final class SettingsDialog {
         btnDone.setOnClickListener(v -> dialog.dismiss());
 
         fillControls(s, cbGrid, cbMinor, cbNumbers, cbArrows, cbXAxis, cbYAxis,
-                cbProjector, rbDegrees, etXMin, etXMax, etYMin, etYMax);
+                cbProjector, cbPrettyVars, rbDegrees, etXMin, etXMax, etYMin, etYMax);
 
         dialog.show();
         Window w = dialog.getWindow();
@@ -125,7 +129,8 @@ public final class SettingsDialog {
 
     private static void fillControls(GraphSettings s, CheckBox cbGrid, CheckBox cbMinor,
                                      CheckBox cbNumbers, CheckBox cbArrows, CheckBox cbXAxis,
-                                     CheckBox cbYAxis, CheckBox cbProjector, RadioButton rbDegrees,
+                                     CheckBox cbYAxis, CheckBox cbProjector, CheckBox cbPrettyVars,
+                                     RadioButton rbDegrees,
                                      EditText etXMin, EditText etXMax, EditText etYMin, EditText etYMax) {
         cbGrid.setChecked(s.showGrid);
         cbMinor.setChecked(s.showMinorGrid);
@@ -134,6 +139,7 @@ public final class SettingsDialog {
         cbXAxis.setChecked(s.showXAxis);
         cbYAxis.setChecked(s.showYAxis);
         cbProjector.setChecked(s.projector);
+        cbPrettyVars.setChecked(s.prettyVariables);
         rbDegrees.setChecked(s.degrees);
         fillWindow(etXMin, etXMax, etYMin, etYMax, s);
     }

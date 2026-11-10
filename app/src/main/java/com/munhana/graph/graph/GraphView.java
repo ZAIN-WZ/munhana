@@ -7,13 +7,16 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import com.munhana.graph.R;
 import com.munhana.graph.math.Equation;
+import com.munhana.graph.math.EquationText;
 import com.munhana.graph.math.Expression;
 
 import java.util.ArrayList;
@@ -48,6 +51,7 @@ public class GraphView extends View {
 
     private boolean showGrid = true, showMinorGrid = true, showAxisNumbers = true;
     private boolean showArrows = true, showXAxis = true, showYAxis = true;
+    private boolean prettyVariables = true;
     private double xMin = -10, xMax = 10, yMin = -10, yMax = 10;
 
     public GraphView(Context c) { super(c); init(c); }
@@ -134,6 +138,7 @@ public class GraphView extends View {
         showArrows = s.showArrows;
         showXAxis = s.showXAxis;
         showYAxis = s.showYAxis;
+        prettyVariables = s.prettyVariables;
         xMin = s.xMin; xMax = s.xMax; yMin = s.yMin; yMax = s.yMax;
         Expression.setDegrees(s.degrees);
         labelPaint.setTextSize((s.projector ? 14 : 10) * density);
@@ -162,14 +167,69 @@ public class GraphView extends View {
         invalidate();
     }
 
-    /** Renders the current graph into a bitmap for export / sharing. */
+    /** Renders the current graph, with an equation footer, for export / sharing. */
     public Bitmap exportBitmap() {
         int w = getWidth(), h = getHeight();
         if (w <= 0 || h <= 0) return null;
-        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bmp);
-        draw(canvas);
-        return bmp;
+
+        Bitmap graph = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas graphCanvas = new Canvas(graph);
+        draw(graphCanvas);
+
+        List<Equation> shown = new ArrayList<>();
+        for (Equation eq : equations) {
+            if (eq.visible && eq.text != null && !eq.text.trim().isEmpty()) shown.add(eq);
+        }
+        if (shown.isEmpty()) return graph;
+
+        float d = density;
+        float pad = 16 * d;
+        float lineHeight = 22 * d;
+        int footer = (int) Math.ceil(pad * 2 + lineHeight + shown.size() * lineHeight);
+
+        Bitmap out = Bitmap.createBitmap(w, h + footer, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(out);
+        canvas.drawColor(0xFF0B0710);
+        canvas.drawBitmap(graph, 0, 0, null);
+        graph.recycle();
+
+        Paint line = new Paint(Paint.ANTI_ALIAS_FLAG);
+        line.setColor(0xFF2A1F3C);
+        line.setStrokeWidth(1 * d);
+        canvas.drawLine(0, h, w, h, line);
+
+        Paint title = new Paint(Paint.ANTI_ALIAS_FLAG);
+        title.setColor(0xFFC9A7FF);
+        title.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        title.setTextSize(12 * d);
+        float titleY = h + pad + 10 * d;
+        canvas.drawText(getContext().getString(R.string.export_equations_title), pad, titleY, title);
+
+        Paint item = new Paint(Paint.ANTI_ALIAS_FLAG);
+        item.setTypeface(Typeface.MONOSPACE);
+        item.setTextSize(13 * d);
+        item.setColor(0xFFF3E9FF);
+
+        Paint dot = new Paint(Paint.ANTI_ALIAS_FLAG);
+        dot.setStyle(Paint.Style.FILL);
+
+        float y = titleY + lineHeight;
+        for (Equation eq : shown) {
+            dot.setColor(eq.color);
+            canvas.drawCircle(pad + 4 * d, y - 4 * d, 4 * d, dot);
+            float tx = pad + 16 * d;
+            float max = w - tx - pad;
+            String text = EquationText.pretty(
+                    eq.text.replace('\n', ' '), prettyVariables);
+            if (item.measureText(text) > max) {
+                int keep = text.length();
+                while (keep > 1 && item.measureText(text.substring(0, keep) + "…") > max) keep--;
+                text = text.substring(0, Math.max(1, keep)) + "…";
+            }
+            canvas.drawText(text, tx, y, item);
+            y += lineHeight;
+        }
+        return out;
     }
 
     @Override
@@ -207,7 +267,7 @@ public class GraphView extends View {
         drawGrid(canvas, w, h);
 
         for (Equation eq : equations) {
-            if (!eq.visible) continue;
+            if (!eq.visible || !eq.plottable) continue;
             drawEquation(canvas, eq, w, h);
         }
 

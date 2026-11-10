@@ -18,6 +18,8 @@ public class Equation {
     public String relation = "=";
     public int color = PALETTE[0];
     public boolean visible = true;
+    /** False for a line that was kept as written but cannot be drawn. */
+    public boolean plottable = true;
 
     public Expression fn;   // right hand side for y=f(x) / x=c
     public Expression lhs;  // implicit
@@ -109,6 +111,32 @@ public class Equation {
         return new int[]{-1, 0};
     }
 
+    /**
+     * Builds an equation while preserving the user's spelling for display.
+     * When the expression cannot be parsed the line is still kept, marked as
+     * not plottable, so nothing the scanner read is silently lost.
+     */
+    public static Equation fromText(String raw) {
+        Equation result = new Equation();
+        String display = raw == null ? "" : raw.trim();
+        String cleaned = EquationText.sanitize(display);
+        if (cleaned.isEmpty()) {
+            result.text = display;
+            result.plottable = false;
+            return result;
+        }
+        try {
+            result = parse(cleaned);
+            result.text = display;
+            result.plottable = true;
+        } catch (Exception e) {
+            result = new Equation();
+            result.text = cleaned;
+            result.plottable = false;
+        }
+        return result;
+    }
+
     public String describe() {
         switch (kind) {
             case FUNCTION: return "y = ";
@@ -120,6 +148,7 @@ public class Equation {
     public Equation copy() {
         Equation e = new Equation();
         e.text = text; e.kind = kind; e.relation = relation; e.color = color; e.visible = visible;
+        e.plottable = plottable;
         e.fn = fn; e.lhs = lhs; e.rhs = rhs; e.g = g;
         return e;
     }
@@ -132,7 +161,7 @@ public class Equation {
         try {
             String[] parts = line.split("\\|", 3);
             if (parts.length < 3) return null;
-            Equation e = parse(parts[2]);
+            Equation e = fromText(parts[2]);
             e.color = (int) Long.parseLong(parts[0]);
             e.visible = "1".equals(parts[1]);
             return e;

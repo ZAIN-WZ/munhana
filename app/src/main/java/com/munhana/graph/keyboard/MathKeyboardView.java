@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A compact mathematical keyboard. Everything is built from framework widgets
- * so the app stays Gradle-free and lightweight.
+ * A compact mathematical keyboard: an action toolbar (letters, undo, cursor
+ * movement, enter, delete), a row of category tabs and a grid of keys.
+ * Everything is built from framework widgets so the app stays Gradle-free and
+ * lightweight.
  */
 public class MathKeyboardView extends LinearLayout {
 
@@ -29,6 +31,10 @@ public class MathKeyboardView extends LinearLayout {
         void onBackspace();
         void onClear();
         void onEnter();
+        default void onUndo() { }
+        default void onLeft() { }
+        default void onRight() { }
+        default void onSystemKeyboard() { }
     }
 
     private static final int STYLE_DIGIT = 0;
@@ -105,17 +111,44 @@ public class MathKeyboardView extends LinearLayout {
 
         buildCategories();
 
+        LinearLayout toolbar = new LinearLayout(context);
+        toolbar.setOrientation(HORIZONTAL);
+        toolbar.setLayoutDirection(LAYOUT_DIRECTION_LTR);
+        addView(toolbar, new LayoutParams(LayoutParams.MATCH_PARENT, dp(46)));
+
+        addToolKey(toolbar, "abc", () -> {
+            if (listener != null) listener.onSystemKeyboard();
+        }, STYLE_FUNC, 1.35f);
+        addToolKey(toolbar, "↶", () -> {
+            if (listener != null) listener.onUndo();
+        }, STYLE_OP, 1f);
+        addToolKey(toolbar, "◀", () -> {
+            if (listener != null) listener.onLeft();
+        }, STYLE_OP, 1f);
+        addToolKey(toolbar, "▶", () -> {
+            if (listener != null) listener.onRight();
+        }, STYLE_OP, 1f);
+        addToolKey(toolbar, "↵", () -> {
+            if (listener != null) listener.onEnter();
+        }, STYLE_PRIMARY, 1.35f);
+        addToolKey(toolbar, "⌫", () -> {
+            if (listener != null) listener.onBackspace();
+        }, STYLE_DANGER, 1f);
+
         HorizontalScrollView scroll = new HorizontalScrollView(context);
         scroll.setHorizontalScrollBarEnabled(false);
         scroll.setOverScrollMode(OVER_SCROLL_NEVER);
 
         tabBar = new LinearLayout(context);
         tabBar.setOrientation(HORIZONTAL);
-        scroll.addView(tabBar, new LayoutParams(LayoutParams.WRAP_CONTENT, dp(42)));
-        addView(scroll, new LayoutParams(LayoutParams.MATCH_PARENT, dp(42)));
+        scroll.addView(tabBar, new LayoutParams(LayoutParams.WRAP_CONTENT, dp(40)));
+        LayoutParams tabsParams = new LayoutParams(LayoutParams.MATCH_PARENT, dp(40));
+        tabsParams.topMargin = dp(4);
+        addView(scroll, tabsParams);
 
         grid = new LinearLayout(context);
         grid.setOrientation(VERTICAL);
+        grid.setLayoutDirection(LAYOUT_DIRECTION_LTR);
         LayoutParams gridParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         gridParams.topMargin = dp(4);
         addView(grid, gridParams);
@@ -133,13 +166,30 @@ public class MathKeyboardView extends LinearLayout {
     private void buildCategories() {
         categories.add(new Category(R.string.keyboard_basic, 5, new Key[][]{
                 {k("x", "x", STYLE_OP), k("y", "y", STYLE_OP), k("x²", "^2", STYLE_OP),
-                        k("xⁿ", "^", STYLE_OP), back()},
+                        k("x³", "^3", STYLE_OP), k("xⁿ", "^", STYLE_OP)},
                 {k("(", "(", STYLE_FUNC), k(")", ")", STYLE_FUNC), k("÷", "/", STYLE_OP),
                         k("×", "*", STYLE_OP), k("−", "-", STYLE_OP)},
                 {d("7"), d("8"), d("9"), k("√", "sqrt(", STYLE_FUNC), k("π", "pi", STYLE_FUNC)},
                 {d("4"), d("5"), d("6"), k("|x|", "abs(", STYLE_FUNC), k("≤", "<=", STYLE_OP)},
                 {d("1"), d("2"), d("3"), k("=", "=", STYLE_OP), k("≥", ">=", STYLE_OP)},
-                {d("0"), d("."), k("+", "+", STYLE_OP), k(",", ",", STYLE_OP), enter()}
+                {d("0"), d("."), k("+", "+", STYLE_OP), k(",", ",", STYLE_OP),
+                        k("e", "e", STYLE_FUNC)}
+        }));
+
+        categories.add(new Category(R.string.keyboard_vars, 5, new Key[][]{
+                {k("x", "x", STYLE_OP), k("y", "y", STYLE_OP),
+                        k("x₁", "x1", STYLE_OP), k("x₂", "x2", STYLE_OP),
+                        k("x₃", "x3", STYLE_OP)},
+                {k("a", "a", STYLE_OP), k("b", "b", STYLE_OP), k("c", "c", STYLE_OP),
+                        k("n", "n", STYLE_OP), k("t", "t", STYLE_OP)},
+                {k("k", "k", STYLE_OP), k("m", "m", STYLE_OP), k("r", "r", STYLE_OP),
+                        k("p", "p", STYLE_OP), k("q", "q", STYLE_OP)},
+                {k("x₁²", "x1^2", STYLE_OP), k("x₂²", "x2^2", STYLE_OP),
+                        k("(", "(", STYLE_FUNC), k(")", ")", STYLE_FUNC),
+                        k("=", "=", STYLE_OP)},
+                {k("≤", "<=", STYLE_OP), k("≥", ">=", STYLE_OP), k("≠", "!=", STYLE_OP),
+                        k("+", "+", STYLE_OP), k("−", "-", STYLE_OP)},
+                {d("1"), d("2"), d("3"), d("0"), k(",", ",", STYLE_OP)}
         }));
 
         categories.add(new Category(R.string.keyboard_functions, 5, new Key[][]{
@@ -277,6 +327,32 @@ public class MathKeyboardView extends LinearLayout {
             }
             grid.addView(row, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         }
+    }
+
+    private void addToolKey(LinearLayout toolbar, String label, Runnable action,
+                            int style, float weight) {
+        TextView v = new TextView(getContext());
+        v.setText(label);
+        v.setGravity(Gravity.CENTER);
+        v.setSingleLine(true);
+        v.setIncludeFontPadding(false);
+        v.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        v.setTextSize(TypedValue.COMPLEX_UNIT_SP, label.length() <= 1 ? 18 : 14);
+        int bg;
+        int fg;
+        switch (style) {
+            case STYLE_PRIMARY: bg = C_PRIMARY; fg = T_PRIMARY; break;
+            case STYLE_DANGER: bg = C_DANGER; fg = T_DANGER; break;
+            case STYLE_OP: bg = C_OP; fg = 0xFFEAD9FF; break;
+            default: bg = C_FUNC; fg = T_ACCENT; break;
+        }
+        v.setTextColor(fg);
+        v.setBackground(keyBackground(bg, dp(11)));
+        v.setContentDescription(label);
+        v.setOnClickListener(view -> action.run());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, weight);
+        lp.setMargins(dp(3), dp(2), dp(3), dp(2));
+        toolbar.addView(v, lp);
     }
 
     private TextView makeKey(Key key) {

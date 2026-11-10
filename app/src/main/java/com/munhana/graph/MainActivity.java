@@ -24,10 +24,15 @@ import android.widget.Toast;
 import com.munhana.graph.graph.GraphSettings;
 import com.munhana.graph.graph.GraphView;
 import com.munhana.graph.math.Equation;
+import com.munhana.graph.math.EquationText;
 import com.munhana.graph.ocr.CropActivity;
 import com.munhana.graph.ocr.ImageProvider;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -51,6 +56,11 @@ public class MainActivity extends Activity {
     private static final int REQ_EXPORT_IMAGE = 104;
     private static final int REQ_EXPORT_TEXT = 105;
     private static final int REQ_IMPORT = 106;
+    private static final int REQ_EXPORT_PROJECT = 107;
+
+    /** Custom MIME type so the file opens in Munhana rather than an editor. */
+    public static final String MIME_PROJECT = "application/vnd.munhana.project";
+    public static final String EXT_PROJECT = ".munhana";
 
     private final List<Equation> equations = new ArrayList<>();
     private GraphView graphView;
@@ -84,15 +94,28 @@ public class MainActivity extends Activity {
         findViewById(R.id.btnMore).setOnClickListener(this::showOverflow);
 
         load();
+        handleIntent(getIntent());
         sync();
         graphView.post(() -> graphView.resetView());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (handleIntent(intent)) sync();
     }
 
     // --------------------------------------------------------------- equations
 
     private boolean addEquation(String raw, int replaceIndex, boolean showError) {
+        String text = raw == null ? "" : raw.trim();
+        if (text.isEmpty()) {
+            if (showError) toast(getString(R.string.invalid_equation));
+            return false;
+        }
         try {
-            Equation eq = Equation.parse(raw);
+            Equation eq = Equation.fromText(text);
             if (replaceIndex >= 0 && replaceIndex < equations.size()) {
                 eq.color = equations.get(replaceIndex).color;
                 eq.visible = equations.get(replaceIndex).visible;
@@ -103,9 +126,7 @@ public class MainActivity extends Activity {
             }
             return true;
         } catch (Exception e) {
-            if (showError) {
-                toast(getString(R.string.invalid_equation));
-            }
+            if (showError) toast(getString(R.string.invalid_equation));
             return false;
         }
     }
@@ -131,21 +152,17 @@ public class MainActivity extends Activity {
             ImageButton eye = row.findViewById(R.id.btnVisibility);
             ImageButton del = row.findViewById(R.id.btnDelete);
 
-            String body = eq.text;
-            String pre = "";
-            String lower = eq.text.toLowerCase(java.util.Locale.ROOT).replace(" ", "");
-            if (lower.startsWith("y=")) {
-                pre = "y =";
-                body = eq.text.substring(eq.text.indexOf('=') + 1);
-            } else if (lower.startsWith("x=")) {
-                pre = "x =";
-                body = eq.text.substring(eq.text.indexOf('=') + 1);
-            }
+            // Show the equation the way it would be written by hand, while the
+            // stored text stays ASCII for parsing and editing.
+            String body = eq.text == null ? "" : eq.text;
+            prefix.setVisibility(View.GONE);
 
             colorBar.setBackgroundTintList(ColorStateList.valueOf(eq.color));
-            prefix.setText(pre);
-            text.setText(body);
-            text.setTextColor(eq.visible ? Color.parseColor("#F3E9FF") : Color.parseColor("#7A6A93"));
+            text.setText(EquationText.pretty(body, settings.prettyVariables));
+            int color = !eq.visible ? Color.parseColor("#7A6A93")
+                    : !eq.plottable ? Color.parseColor("#B7A6D0")
+                    : Color.parseColor("#F3E9FF");
+            text.setTextColor(color);
             eye.setImageResource(eq.visible ? R.drawable.ic_eye : R.drawable.ic_eye_off);
             eye.setAlpha(eq.visible ? 1f : 0.7f);
 
@@ -271,6 +288,15 @@ public class MainActivity extends Activity {
                     toast(getString(R.string.export_failed));
                 }
             }
+        } else if (requestCode == REQ_EXPORT_PROJECT) {
+            if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                try {
+                    writeProject(data.getData());
+                    toast(getString(R.string.project_ready));
+                } catch (Exception e) {
+                    toast(getString(R.string.export_failed));
+                }
+            }
         } else if (requestCode == REQ_IMPORT) {
             if (resultCode == RESULT_OK && data != null && data.getData() != null) {
                 try {
@@ -307,29 +333,131 @@ public class MainActivity extends Activity {
         startActivityForResult(i, REQ_EXPORT_TEXT);
     }
 
-    private void shareGraph() {
-        Bitmap bmp = graphView.exportBitmap();
-        if (bmp == null) {
-            toast(getString(R.string.export_failed));
+    /**
+     * Shares a real project file. The receiver (WhatsApp, Telegram, mail, a file
+     * manager) gets a .munhana document which reopens with all equations and
+     * colours instead of a flat screenshot.
+     */
+    private void shareProject() {
+        if (equations.isEmpty()) {
+            toast(getString(R.string.export_empty));
             return;
         }
         try {
             File dir = new File(getCacheDir(), "shared");
             if (!dir.exists() && !dir.mkdirs()) throw new IllegalStateException();
-            File out = new File(dir, "munhana-" + System.currentTimeMillis() + ".png");
+            File out = new File(dir, "munhana-" + System.currentTimeMillis() + EXT_PROJECT);
             try (OutputStream os = new java.io.FileOutputStream(out)) {
-                bmp.compress(Bitmap.CompressFormat.PNG, 100, os);
+                os.write(projectJson().getBytes("UTF-8"));
             }
             Uri uri = ImageProvider.uriFor(out);
             Intent send = new Intent(Intent.ACTION_SEND);
-            send.setType("image/png");
+            send.setType(MIME_PROJECT);
             send.putExtra(Intent.EXTRA_STREAM, uri);
+            send.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
             send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(Intent.createChooser(send, getString(R.string.share_graph)));
+            startActivity(Intent.createChooser(send, getString(R.string.share_project)));
         } catch (Exception e) {
             toast(getString(R.string.export_failed));
-        } finally {
-            bmp.recycle();
+        }
+    }
+
+    private void exportProject() {
+        if (equations.isEmpty()) {
+            toast(getString(R.string.export_empty));
+            return;
+        }
+        Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType(MIME_PROJECT);
+        i.putExtra(Intent.EXTRA_TITLE, "munhana" + EXT_PROJECT);
+        startActivityForResult(i, REQ_EXPORT_PROJECT);
+    }
+
+    private String projectJson() throws Exception {
+        JSONObject root = new JSONObject();
+        root.put("app", "munhana");
+        root.put("format", 1);
+        root.put("version", getPackageManager()
+                .getPackageInfo(getPackageName(), 0).versionName);
+        JSONArray list = new JSONArray();
+        for (Equation e : equations) {
+            JSONObject o = new JSONObject();
+            o.put("text", e.text == null ? "" : e.text);
+            o.put("color", e.color);
+            o.put("visible", e.visible);
+            list.put(o);
+        }
+        root.put("equations", list);
+        return root.toString(2);
+    }
+
+    private void writeProject(Uri uri) throws Exception {
+        try (OutputStream os = getContentResolver().openOutputStream(uri)) {
+            if (os == null) throw new IllegalStateException("no stream");
+            os.write(projectJson().getBytes("UTF-8"));
+        }
+    }
+
+    /** Loads a shared project. Returns the number of imported equations. */
+    private int readProject(Uri uri) throws Exception {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try (InputStream is = getContentResolver().openInputStream(uri)) {
+            if (is == null) throw new IllegalStateException("no stream");
+            byte[] buf = new byte[8192];
+            int n;
+            while ((n = is.read(buf)) > 0) buffer.write(buf, 0, n);
+        }
+        String text = buffer.toString("UTF-8");
+
+        equations.clear();
+        JSONObject root = new JSONObject(text);
+        JSONArray list = root.optJSONArray("equations");
+        if (list != null) {
+            for (int i = 0; i < list.length(); i++) {
+                JSONObject o = list.optJSONObject(i);
+                if (o == null) continue;
+                String t = o.optString("text", "").trim();
+                if (t.isEmpty()) continue;
+                Equation e = Equation.fromText(t);
+                e.color = o.optInt("color", Equation.PALETTE[i % Equation.PALETTE.length]);
+                e.visible = o.optBoolean("visible", true);
+                equations.add(e);
+            }
+        } else {
+            // Plain list fallback, for hand-written project files.
+            BufferedReader reader = new BufferedReader(new java.io.StringReader(text));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String t = line.trim();
+                if (t.isEmpty() || t.startsWith("#")) continue;
+                addEquation(t, -1, false);
+            }
+        }
+        persist();
+        return equations.size();
+    }
+
+    /** Handles VIEW / SEND intents for .munhana project files. */
+    private boolean handleIntent(Intent intent) {
+        if (intent == null) return false;
+        String action = intent.getAction();
+        Uri uri = intent.getData();
+        if (uri == null && Intent.ACTION_SEND.equals(action)) {
+            uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        }
+        if (uri == null) return false;
+        if (!Intent.ACTION_VIEW.equals(action) && !Intent.ACTION_SEND.equals(action)
+                && !Intent.ACTION_EDIT.equals(action)) return false;
+        try {
+            int n = readProject(uri);
+            if (n > 0) {
+                toast(n + " " + getString(R.string.equation_label));
+            }
+            return true;
+        } catch (Exception e) {
+            toast(getString(R.string.project_open_failed));
+            return false;
         }
     }
 
@@ -386,10 +514,11 @@ public class MainActivity extends Activity {
         menu.getMenu().add(0, 3, 2, R.string.quick_examples);
         menu.getMenu().add(0, 4, 3, R.string.export_image);
         menu.getMenu().add(0, 5, 4, R.string.export_text);
-        menu.getMenu().add(0, 6, 5, R.string.share_graph);
-        menu.getMenu().add(0, 7, 6, R.string.import_equations);
-        menu.getMenu().add(0, 8, 7, R.string.clear_all);
-        menu.getMenu().add(0, 9, 8, R.string.about);
+        menu.getMenu().add(0, 10, 5, R.string.export_project);
+        menu.getMenu().add(0, 6, 6, R.string.share_project);
+        menu.getMenu().add(0, 7, 7, R.string.import_equations);
+        menu.getMenu().add(0, 8, 8, R.string.clear_all);
+        menu.getMenu().add(0, 9, 9, R.string.about);
         menu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case 1: graphView.resetView(); return true;
@@ -397,10 +526,11 @@ public class MainActivity extends Activity {
                 case 3: showExamples(); return true;
                 case 4: exportImage(); return true;
                 case 5: exportText(); return true;
-                case 6: shareGraph(); return true;
+                case 6: shareProject(); return true;
                 case 7: importEquations(); return true;
                 case 8: confirmClear(); return true;
                 case 9: showAbout(); return true;
+                case 10: exportProject(); return true;
             }
             return false;
         });
@@ -411,6 +541,7 @@ public class MainActivity extends Activity {
         SettingsDialog.show(this, settings, () -> {
             graphView.applySettings(settings);
             graphView.invalidate();
+            sync();
         });
     }
 

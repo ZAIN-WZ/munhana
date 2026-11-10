@@ -93,6 +93,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:text="@string/section_vars" />
+
+        <CheckBox
+            android:id="@+id/cbPrettyVars"
+            style="@style/Munhana.Setting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/opt_pretty_vars" />
+
+        <TextView
+            style="@style/Munhana.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:text="@string/section_window" />
 
         <LinearLayout

@@ -64,9 +64,9 @@ public class ImageProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         String name = uri.getLastPathSegment();
-        if (name != null && name.toLowerCase(java.util.Locale.ROOT).endsWith(".png")) {
-            return "image/png";
-        }
+        String lower = name == null ? "" : name.toLowerCase(java.util.Locale.ROOT);
+        if (lower.endsWith(".png")) return "image/png";
+        if (lower.endsWith(".munhana")) return "application/vnd.munhana.project";
         return "image/jpeg";
     }
 

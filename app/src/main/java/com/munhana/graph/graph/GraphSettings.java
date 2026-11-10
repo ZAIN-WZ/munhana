@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
- * Persistent graph appearance and window settings.
+ * Persistent graph appearance / window settings for the settings panel.
  */
 public class GraphSettings {
 
@@ -18,6 +18,8 @@ public class GraphSettings {
     public boolean showYAxis = true;
     public boolean degrees = false;
     public boolean projector = false;
+    /** Draw X1/X2 with subscripts (X\u2081, X\u2082) instead of plain digits. */
+    public boolean prettyVariables = true;
     public double xMin = -10, xMax = 10;
     public double yMin = -10, yMax = 10;
 
@@ -32,6 +34,7 @@ public class GraphSettings {
         s.showYAxis = p.getBoolean("showYAxis", true);
         s.degrees = p.getBoolean("degrees", false);
         s.projector = p.getBoolean("projector", false);
+        s.prettyVariables = p.getBoolean("prettyVariables", true);
         s.xMin = p.getFloat("xMin", -10);
         s.xMax = p.getFloat("xMax", 10);
         s.yMin = p.getFloat("yMin", -10);
@@ -50,6 +53,7 @@ public class GraphSettings {
         e.putBoolean("showYAxis", showYAxis);
         e.putBoolean("degrees", degrees);
         e.putBoolean("projector", projector);
+        e.putBoolean("prettyVariables", prettyVariables);
         e.putFloat("xMin", (float) xMin);
         e.putFloat("xMax", (float) xMax);
         e.putFloat("yMin", (float) yMin);

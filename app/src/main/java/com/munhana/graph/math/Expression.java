@@ -598,6 +598,20 @@ public final class Expression {
             if (s.regionMatches(true, i, "tau", 0, 3)) { i += 3; return c(2 * Math.PI); }
             if (s.regionMatches(true, i, "phi", 0, 3)) { i += 3; return c((1 + Math.sqrt(5)) / 2); }
             if (ch == 'e' || ch == 'E') { i++; return c(Math.E); }
+            // Indexed variables from linear programming: X1 is the horizontal
+            // axis and X2 the vertical one, so a scanned constraint such as
+            // 4X1 + X2 <= 120 plots directly. Any other letter+number name is
+            // kept as an ordinary named variable.
+            if (Character.isLetter(ch) && i + 1 < s.length()
+                    && Character.isDigit(s.charAt(i + 1))) {
+                int j = i + 1;
+                while (j < s.length() && Character.isDigit(s.charAt(j))) j++;
+                String name = s.substring(i, j).toLowerCase(java.util.Locale.ROOT);
+                i = j;
+                if (name.equals("x1")) return new Expression(VARX, 0, null, null, 0);
+                if (name.equals("x2")) return new Expression(VARY, 0, null, null, 0);
+                return new Expression(VARNAME, 0, null, null, 0);
+            }
             if (ch == 'x' || ch == 'X' || ch == 't' || ch == 'T') { i++; return new Expression(VARX, 0, null, null, 0); }
             if (ch == 'y' || ch == 'Y') { i++; return new Expression(VARY, 0, null, null, 0); }
             i++;

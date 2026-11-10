@@ -2,6 +2,9 @@ package com.munhana.graph.ocr;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
@@ -12,22 +15,23 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Offline equation extraction: Tesseract OCR plus a maths-aware clean-up pass.
- * Everything runs on the device, no network involved.
  *
- * <p>Recognition runs several passes (two image variants x up to three page
- * segmentation modes) and keeps the result that yields the most plausible
- * equations. This noticeably helps with photos of handwritten formulas, where
- * no single threshold / segmentation setting works for everything.</p>
+ * <p>Recognition now works line by line. The photo is first converted to a
+ * clean ink mask (colour saturation + background subtraction), deskewed and
+ * split into text bands; every band gets its own single-line OCR pass. This is
+ * much more reliable than feeding a whole whiteboard photo to the engine.</p>
  */
 public final class MathOcr {
 
     private static final String TAG = "MathOcr";
     private static final String WHITELIST =
-            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/^()=<>.,|";
+            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/^()=<>.,|[]!";
 
     private static TessBaseAPI api;
     private static boolean failed = false;
@@ -56,7 +60,6 @@ public final class MathOcr {
             }
             engine.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO);
             engine.setVariable("tessedit_char_whitelist", WHITELIST);
-            // Keep the original line structure; it helps multi-equation crops.
             engine.setVariable("preserve_interword_spaces", "1");
             api = engine;
             return true;
@@ -88,7 +91,7 @@ public final class MathOcr {
      * Multi-pass recognition.
      *
      * @param singleLine when true the crop is expected to hold exactly one
-     *                   formula, so single-line segmentation is tried first.
+     *                   formula, so single-line segmentation is used directly.
      */
     public static List<String> recognize(Context context, Bitmap bitmap, boolean singleLine) {
         if (bitmap == null) return new ArrayList<>();
@@ -97,34 +100,48 @@ public final class MathOcr {
         Bitmap hard = null;
         Bitmap soft = null;
         try {
-            // Order matters on ties: the first pass is the "most natural" mode
-            // for this kind of crop.
-            int[] modes = singleLine
-                    ? new int[]{
-                            TessBaseAPI.PageSegMode.PSM_SINGLE_LINE,
-                            TessBaseAPI.PageSegMode.PSM_SINGLE_BLOCK,
-                            TessBaseAPI.PageSegMode.PSM_AUTO}
-                    : new int[]{
-                            TessBaseAPI.PageSegMode.PSM_SINGLE_BLOCK,
-                            TessBaseAPI.PageSegMode.PSM_AUTO,
-                            TessBaseAPI.PageSegMode.PSM_SINGLE_LINE};
-
             Pass best = null;
             int order = 0;
 
-            // Process one variant at a time so two full-size bitmaps are never
-            // alive together on low-memory devices.
             hard = Preprocess.prepare(bitmap);
-            for (int mode : modes) {
-                Pass pass = runPass(hard, mode, order++);
-                if (pass != null && (best == null || pass.score > best.score)) best = pass;
-            }
-            if (hard != bitmap) { hard.recycle(); hard = null; }
+            if (singleLine) {
+                Pass p = runPass(hard, TessBaseAPI.PageSegMode.PSM_SINGLE_LINE, order++);
+                if (p != null) best = p;
+            } else {
+                // 1) whole crop as a block
+                Pass block = runPass(hard, TessBaseAPI.PageSegMode.PSM_SINGLE_BLOCK, order++);
+                if (block != null) best = block;
 
+                // 2) every detected line on its own
+                Pass lines = runLines(hard, order++);
+                if (lines != null && (best == null || lines.score > best.score)) best = lines;
+
+                // 3) automatic layout as a safety net
+                Pass auto = runPass(hard, TessBaseAPI.PageSegMode.PSM_AUTO, order++);
+                if (auto != null && (best == null || auto.score > best.score)) best = auto;
+            }
+
+            // A soft grayscale variant helps faint pencil and thin pen.
             soft = Preprocess.prepareSoft(bitmap);
-            for (int mode : modes) {
-                Pass pass = runPass(soft, mode, order++);
-                if (pass != null && (best == null || pass.score > best.score)) best = pass;
+            int mode = singleLine
+                    ? TessBaseAPI.PageSegMode.PSM_SINGLE_LINE
+                    : TessBaseAPI.PageSegMode.PSM_SINGLE_BLOCK;
+            Pass softPass = runPass(soft, mode, order++);
+            if (softPass != null
+                    && (best == null || softPass.score > best.score + 6)) {
+                best = softPass;
+            }
+
+            // Handwriting fallback. Tesseract 3 has no handwriting model, and on
+            // marker photos it tends to return long random letter strings such
+            // as "HV9M145557J11E". Prefer the geometric reader unless the
+            // printed-text result really looks like an equation.
+            List<String> hand = HandwritingOcr.recognize(context, hard);
+            if (!hand.isEmpty()) {
+                boolean printed = best != null && looksPrinted(best.equations);
+                if (!printed || (singleLine && best.equations.isEmpty())) {
+                    best = new Pass(hand, score(hand, mode, order) + 40);
+                }
             }
 
             return best == null ? new ArrayList<>() : best.equations;
@@ -147,6 +164,55 @@ public final class MathOcr {
         }
     }
 
+    private static Pass runLines(Bitmap hard, int order) {
+        List<int[]> bands = Preprocess.lineBands(hard);
+        if (bands.isEmpty()) return null;
+
+        Set<String> found = new LinkedHashSet<>();
+        int height = hard.getHeight();
+        int width = hard.getWidth();
+
+        for (int[] band : bands) {
+            int top = Math.max(0, band[0] - 6);
+            int bottom = Math.min(height, band[1] + 8);
+            if (bottom - top < 12) continue;
+            Bitmap line = Bitmap.createBitmap(hard, 0, top, width, bottom - top);
+            try {
+                Bitmap prepared = padAndScale(line);
+                Pass p = runPass(prepared, TessBaseAPI.PageSegMode.PSM_SINGLE_LINE, order);
+                if (prepared != line) prepared.recycle();
+                if (p != null) {
+                    for (String s : p.equations) found.add(s);
+                }
+            } catch (Throwable t) {
+                Log.w(TAG, "line pass failed", t);
+            } finally {
+                line.recycle();
+            }
+        }
+
+        if (found.isEmpty()) return null;
+        List<String> out = new ArrayList<>(found);
+        return new Pass(out, score(out, TessBaseAPI.PageSegMode.PSM_SINGLE_LINE, order));
+    }
+
+    /** Adds a white margin and enlarges short lines, both help the engine. */
+    private static Bitmap padAndScale(Bitmap line) {
+        int h = line.getHeight();
+        float scale = h < 64 ? Math.min(3f, 72f / Math.max(1, h)) : 1f;
+        int w = Math.round(line.getWidth() * scale);
+        int nh = Math.round(h * scale);
+        Bitmap scaled = scale == 1f ? line : Bitmap.createScaledBitmap(line, w, nh, true);
+
+        int pad = Math.max(14, Math.round(nh * 0.25f));
+        Bitmap out = Bitmap.createBitmap(w + pad * 2, nh + pad * 2, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(out);
+        c.drawColor(Color.WHITE);
+        c.drawBitmap(scaled, pad, pad, new Paint(Paint.FILTER_BITMAP_FLAG));
+        if (scaled != line) scaled.recycle();
+        return out;
+    }
+
     private static Pass runPass(Bitmap image, int mode, int order) {
         try {
             List<String> equations;
@@ -165,21 +231,41 @@ public final class MathOcr {
     }
 
     /**
-     * Heuristic confidence: more valid equations is better, and each equation
-     * earns a small bonus for length and for containing both sides of "=".
-     * Very early passes win ties so that a clean, expected segmentation is
-     * preferred over an accidental duplicate.
+     * True when a Tesseract result is credible enough to keep over the
+     * handwriting reader. Printed pages produce short, structured lines;
+     * handwritten pages produce long runs of unrelated letters.
      */
+    private static boolean looksPrinted(List<String> equations) {
+        if (equations == null || equations.isEmpty()) return false;
+        boolean relation = false;
+        for (String s : equations) {
+            if (s == null) continue;
+            if (s.indexOf('=') > 0) relation = true;
+            if (s.matches(".*[A-Z]{2,}.*")) return false;
+            if (s.length() > 34) return false;
+        }
+        return relation;
+    }
+
+    private static boolean hasRelation(List<String> equations) {
+        if (equations == null) return false;
+        for (String s : equations) {
+            if (s != null && s.indexOf('=') > 0) return true;
+        }
+        return false;
+    }
+
     private static int score(List<String> equations, int mode, int order) {
         if (equations == null || equations.isEmpty()) return -1000;
-        int score = equations.size() * 24;
+        int score = equations.size() * 18;
         for (String eq : equations) {
             int len = eq.length();
-            score += Math.min(18, len);
-            if (eq.indexOf('=') > 0) score += 6;
-            if (eq.matches(".*[+\\-*/^].*")) score += 3;
+            score += Math.min(20, len);
+            if (eq.indexOf('=') > 0) score += 8;
+            if (eq.matches(".*[+\\-*/^<>].*")) score += 4;
+            if (eq.matches(".*[0-9].*")) score += 4;
+            if (len > 60) score -= 12;
         }
-        // Tiny preference for the earlier (more natural) passes.
         score -= order;
         return score;
     }

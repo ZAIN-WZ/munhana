@@ -17,7 +17,9 @@ import com.munhana.graph.graph.GraphView;
 import com.munhana.graph.keyboard.MathKeyboardView;
 import com.munhana.graph.math.Equation;
 
+import java.util.ArrayDeque;
 import java.util.Collections;
+import java.util.Deque;
 
 /**
  * Full-screen equation editor: live preview, professional maths keyboard and
@@ -38,6 +40,11 @@ public class EquationEditActivity extends Activity {
 
     private int editIndex = -1;
     private boolean systemIme = false;
+
+    /** Lightweight undo history; every text change pushes the previous state. */
+    private final Deque<String> history = new ArrayDeque<>();
+    private String lastText = "";
+    private boolean restoring = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,7 @@ public class EquationEditActivity extends Activity {
             input.setText(initial);
             input.setSelection(initial.length());
         }
+        lastText = input.getText() == null ? "" : input.getText().toString();
         input.setShowSoftInputOnFocus(false);
 
         ImageButton back = findViewById(R.id.btnBack);
@@ -80,14 +88,31 @@ public class EquationEditActivity extends Activity {
         keyboard.setListener(new MathKeyboardView.Listener() {
             @Override public void onInsert(String text) { insert(text); }
             @Override public void onBackspace() { backspace(); }
-            @Override public void onClear() { input.setText(""); input.requestFocus(); }
+            @Override public void onClear() {
+                pushHistory();
+                input.setText("");
+                input.requestFocus();
+                input.setSelection(0);
+            }
             @Override public void onEnter() { save(); }
+            @Override public void onUndo() { undo(); }
+            @Override public void onLeft() { moveCursor(-1); }
+            @Override public void onRight() { moveCursor(1); }
+            @Override public void onSystemKeyboard() { toggleSystemKeyboard(); }
         });
 
         input.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
             @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
-            @Override public void afterTextChanged(Editable s) { validate(); }
+            @Override public void afterTextChanged(Editable s) {
+                String now = s.toString();
+                if (!restoring && !now.equals(lastText)) {
+                    history.push(lastText);
+                    while (history.size() > 60) history.removeLast();
+                    lastText = now;
+                }
+                validate();
+            }
         });
 
         input.setOnEditorActionListener((v, actionId, event) -> {
@@ -102,8 +127,10 @@ public class EquationEditActivity extends Activity {
     /** Inserts text, automatically closing a freshly opened bracket. */
     private void insert(String text) {
         if (text == null) return;
-        int start = Math.max(0, input.getSelectionStart());
-        int end = Math.max(0, input.getSelectionEnd());
+        int start = input.getSelectionStart();
+        int end = input.getSelectionEnd();
+        if (start < 0) start = input.length();
+        if (end < 0) end = start;
         if (start > end) { int t = start; start = end; end = t; }
 
         String insert = text;
@@ -126,20 +153,53 @@ public class EquationEditActivity extends Activity {
         Editable e = input.getText();
         e.replace(start, end, insert);
         int caret = start + insert.length() - cursorBack;
-        input.setSelection(Math.max(0, Math.min(caret, input.length())));
         input.requestFocus();
+        input.setSelection(Math.max(0, Math.min(caret, input.length())));
     }
 
     private void backspace() {
-        int start = Math.max(0, input.getSelectionStart());
-        int end = Math.max(0, input.getSelectionEnd());
+        int start = input.getSelectionStart();
+        int end = input.getSelectionEnd();
+        if (start < 0) start = input.length();
+        if (end < 0) end = start;
+        if (start > end) { int t = start; start = end; end = t; }
+
         Editable e = input.getText();
+        int caret;
         if (end > start) {
             e.delete(start, end);
+            caret = start;
         } else if (start > 0) {
             e.delete(start - 1, start);
+            caret = start - 1;
+        } else {
+            caret = 0;
         }
-        input.setSelection(Math.max(0, Math.min(start, input.length())));
+        input.requestFocus();
+        input.setSelection(Math.max(0, Math.min(caret, input.length())));
+    }
+
+    private void moveCursor(int delta) {
+        int pos = input.getSelectionStart();
+        if (pos < 0) pos = input.length();
+        pos = Math.max(0, Math.min(input.length(), pos + delta));
+        input.requestFocus();
+        input.setSelection(pos);
+    }
+
+    private void pushHistory() {
+        history.push(lastText);
+        while (history.size() > 60) history.removeLast();
+    }
+
+    private void undo() {
+        if (history.isEmpty()) return;
+        String previous = history.pop();
+        restoring = true;
+        input.setText(previous);
+        input.setSelection(previous.length());
+        restoring = false;
+        lastText = previous;
         input.requestFocus();
     }
 
@@ -158,22 +218,24 @@ public class EquationEditActivity extends Activity {
             save.setEnabled(true);
             save.setAlpha(1f);
             preview.setEquations(Collections.singletonList(eq));
-            return true;
         } catch (Exception ex) {
+            // Keep the line: the user may still be editing, or may simply want
+            // to save a note that cannot be plotted.
+            error.setText(R.string.not_plottable);
             error.setVisibility(View.VISIBLE);
-            save.setEnabled(false);
-            save.setAlpha(0.55f);
+            save.setEnabled(true);
+            save.setAlpha(1f);
             preview.setEquations(Collections.emptyList());
-            return false;
         }
+        return true;
     }
 
     private void save() {
-        if (!validate()) {
+        String raw = input.getText() == null ? "" : input.getText().toString().trim();
+        if (raw.isEmpty()) {
             error.setVisibility(View.VISIBLE);
             return;
         }
-        String raw = input.getText().toString().trim();
         Intent data = new Intent();
         data.putExtra(EXTRA_RESULT, raw);
         data.putExtra(EXTRA_INDEX, editIndex);

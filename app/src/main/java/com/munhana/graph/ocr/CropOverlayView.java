@@ -11,9 +11,13 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Shows a photo and lets the user drag / resize a rectangle over the equations
- * they want to capture.
+ * they want to capture. It can also show automatically detected equation
+ * regions: tapping a box selects or deselects it.
  */
 public class CropOverlayView extends View {
 
@@ -22,6 +26,14 @@ public class CropOverlayView extends View {
     private Bitmap bitmap;
     private final RectF imageRect = new RectF();
     private final RectF crop = new RectF();
+    private final List<RectF> autoBoxes = new ArrayList<>(); // image coordinates
+    private final List<Boolean> autoOn = new ArrayList<>();
+    private boolean autoMode = false;
+    private int pendingBox = -1;
+    private float downX, downY;
+    private final Paint boxFill = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint boxStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint boxOff = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint bmpPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private final Paint dim = new Paint();
     private final Paint frame = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -49,6 +61,14 @@ public class CropOverlayView extends View {
         thirds.setStyle(Paint.Style.STROKE);
         thirds.setStrokeWidth(0.8f * density);
         thirds.setColor(0x66C9A7FF);
+        boxFill.setStyle(Paint.Style.FILL);
+        boxFill.setColor(0x33A855F7);
+        boxStroke.setStyle(Paint.Style.STROKE);
+        boxStroke.setStrokeWidth(2.2f * density);
+        boxStroke.setColor(0xFFC9A7FF);
+        boxOff.setStyle(Paint.Style.STROKE);
+        boxOff.setStrokeWidth(1.4f * density);
+        boxOff.setColor(0x99B7A6D0);
         setLayerType(LAYER_TYPE_HARDWARE, null);
     }
 
@@ -57,9 +77,42 @@ public class CropOverlayView extends View {
     public void setBitmap(Bitmap b) {
         bitmap = b;
         cropInitialised = false;
+        autoMode = false;
+        autoBoxes.clear();
+        autoOn.clear();
+        pendingBox = -1;
         requestLayout();
         invalidate();
     }
+
+    /** Shows automatically detected equation regions (image coordinates). */
+    public void setAutoRegions(List<RectF> boxes) {
+        autoBoxes.clear();
+        autoOn.clear();
+        if (boxes != null) {
+            for (RectF r : boxes) {
+                if (r != null && r.width() > 4 && r.height() > 4) {
+                    autoBoxes.add(new RectF(r));
+                    autoOn.add(Boolean.TRUE);
+                }
+            }
+        }
+        autoMode = !autoBoxes.isEmpty();
+        pendingBox = -1;
+        invalidate();
+    }
+
+    public boolean hasAutoRegions() { return !autoBoxes.isEmpty(); }
+
+    public boolean isAutoMode() { return autoMode; }
+
+    public int selectedRegionCount() {
+        int n = 0;
+        for (Boolean b : autoOn) if (b) n++;
+        return n;
+    }
+
+    public int regionCount() { return autoBoxes.size(); }
 
     public Bitmap getBitmap() { return bitmap; }
 
@@ -96,6 +149,11 @@ public class CropOverlayView extends View {
 
         canvas.drawBitmap(bitmap, null, imageRect, bmpPaint);
 
+        if (autoMode) {
+            drawAutoBoxes(canvas);
+            return;
+        }
+
         // dim everything outside the crop
         canvas.drawRect(0, 0, getWidth(), crop.top, dim);
         canvas.drawRect(0, crop.bottom, getWidth(), getHeight(), dim);
@@ -127,6 +185,59 @@ public class CropOverlayView extends View {
         canvas.drawCircle(crop.right, crop.centerY(), gr, handle);
     }
 
+    private RectF toViewRect(RectF img) {
+        float s = imageRect.width() / Math.max(1, bitmap.getWidth());
+        return new RectF(imageRect.left + img.left * s, imageRect.top + img.top * s,
+                imageRect.left + img.right * s, imageRect.top + img.bottom * s);
+    }
+
+    private void drawAutoBoxes(Canvas canvas) {
+        canvas.drawRect(imageRect, dim);
+        for (int i = 0; i < autoBoxes.size(); i++) {
+            RectF vr = toViewRect(autoBoxes.get(i));
+            if (autoOn.get(i)) {
+                // Redraw the selected part without the dim layer.
+                canvas.save();
+                canvas.clipRect(vr);
+                canvas.drawBitmap(bitmap, null, imageRect, bmpPaint);
+                canvas.restore();
+                canvas.drawRoundRect(vr, 5 * density, 5 * density, boxFill);
+                canvas.drawRoundRect(vr, 5 * density, 5 * density, boxStroke);
+            } else {
+                canvas.drawRoundRect(vr, 5 * density, 5 * density, boxOff);
+            }
+        }
+    }
+
+    private int boxAt(float x, float y) {
+        float slop = 8 * density;
+        for (int i = autoBoxes.size() - 1; i >= 0; i--) {
+            RectF vr = toViewRect(autoBoxes.get(i));
+            if (x >= vr.left - slop && x <= vr.right + slop
+                    && y >= vr.top - slop && y <= vr.bottom + slop) return i;
+        }
+        return -1;
+    }
+
+    /** Bitmaps of the selected detected regions, in image coordinates. */
+    public List<Bitmap> selectedCrops() {
+        List<Bitmap> out = new ArrayList<>();
+        if (bitmap == null) return out;
+        int bw = bitmap.getWidth(), bh = bitmap.getHeight();
+        for (int i = 0; i < autoBoxes.size(); i++) {
+            if (!autoOn.get(i)) continue;
+            RectF r = autoBoxes.get(i);
+            int pad = Math.max(4, Math.round(r.height() * 0.10f));
+            int l = Math.max(0, Math.round(r.left) - pad);
+            int t = Math.max(0, Math.round(r.top) - pad);
+            int rr = Math.min(bw, Math.round(r.right) + pad);
+            int bb = Math.min(bh, Math.round(r.bottom) + pad);
+            if (rr - l < 8 || bb - t < 8) continue;
+            out.add(Bitmap.createBitmap(bitmap, l, t, rr - l, bb - t));
+        }
+        return out;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (bitmap == null) return false;
@@ -134,6 +245,12 @@ public class CropOverlayView extends View {
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: {
                 lastX = x; lastY = y;
+                downX = x; downY = y;
+                if (autoMode) {
+                    pendingBox = boxAt(x, y);
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                    return true;
+                }
                 mode = hitTest(x, y);
                 if (mode == 2) {
                     anchorX = x; anchorY = y;
@@ -146,6 +263,12 @@ public class CropOverlayView extends View {
             case MotionEvent.ACTION_MOVE: {
                 float dx = x - lastX, dy = y - lastY;
                 lastX = x; lastY = y;
+                if (autoMode) {
+                    if (pendingBox >= 0 && Math.hypot(x - downX, y - downY) > 18 * density) {
+                        pendingBox = -1;
+                    }
+                    return true;
+                }
                 if (mode == 1) {
                     crop.offset(dx, dy);
                     clampCrop();
@@ -164,6 +287,15 @@ public class CropOverlayView extends View {
             }
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL: {
+                if (autoMode) {
+                    if (pendingBox >= 0 && ev.getActionMasked() == MotionEvent.ACTION_UP
+                            && Math.hypot(x - downX, y - downY) <= 18 * density) {
+                        autoOn.set(pendingBox, !autoOn.get(pendingBox));
+                        invalidate();
+                    }
+                    pendingBox = -1;
+                    return true;
+                }
                 if (mode == 2 && (crop.width() < 12 * density || crop.height() < 12 * density)) {
                     cropInitialised = false;
                     invalidate();
@@ -223,6 +355,10 @@ public class CropOverlayView extends View {
 
     public void resetCrop() {
         cropInitialised = false;
+        autoMode = false;
+        autoBoxes.clear();
+        autoOn.clear();
+        pendingBox = -1;
         invalidate();
     }
 

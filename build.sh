@@ -86,9 +86,9 @@ echo "[7/8] aligning"
 echo "[8/8] signing"
 "$APKSIGNER" sign --ks "$KEYSTORE" --ks-key-alias "$KS_ALIAS" \
   --ks-pass "pass:$KS_PASS" --key-pass "pass:$KS_PASS" \
-  --out "$OUT/munhana-1.1.apk" "$BUILD/aligned.apk"
+  --out "$OUT/munhana-1.2.apk" "$BUILD/aligned.apk"
 
-"$APKSIGNER" verify --print-certs "$OUT/munhana-1.1.apk" | head -4
+"$APKSIGNER" verify --print-certs "$OUT/munhana-1.2.apk" | head -4
 echo
-echo "APK: $OUT/munhana-1.1.apk"
-ls -lh "$OUT/munhana-1.1.apk"
+echo "APK: $OUT/munhana-1.2.apk"
+ls -lh "$OUT/munhana-1.2.apk"

@@ -11,6 +11,11 @@
 
     <string name="crop_title">قص المعادلة</string>
     <string name="crop_hint">حرّك المستطيل أو اسحب زواياه لتحديد المعادلات، ثم اضغط استخراج</string>
+    <string name="detect_searching">جارٍ اكتشاف أماكن المعادلات…</string>
+    <string name="detect_done">تم اكتشاف %1$d معادلة. اضغط على أي مربع لتفعيله أو إلغائه، ثم اضغط استخراج.</string>
+    <string name="detect_none">لم يتم اكتشاف معادلات تلقائيًا. اسحب المربع يدويًا حول ما تريد.</string>
+    <string name="crop_hint_boxes">تم اكتشاف المعادلات وتحديدها بمربعات. اضغط على المربع لتغيير التحديد.</string>
+    <string name="select_region">حدّد مربعًا واحدًا على الأقل.</string>
     <string name="single_line">سطر واحد فقط (معادلة واحدة)</string>
     <string name="manual_short">يدويًا</string>
     <string name="extract">استخراج المعادلات</string>
@@ -34,7 +39,7 @@
     <string name="clear_all">مسح الكل</string>
     <string name="clear_confirm">هل تريد مسح كل المعادلات؟</string>
     <string name="about">حول التطبيق</string>
-    <string name="about_text">منحنى — راسم دوال عربي بواجهة داكنة وتدرجات بنفسجية.\n\nيدعم الدوال الصريحة مثل y = x^2، والمعادلات الضمنية مثل x^2 + y^2 = 25، والمتباينات، مع تقريب وتمرير باللمس. يمكنك أيضًا استخراج المعادلات من صورة قديمة أو لقطة كاميرا مباشرة عبر تحديد مستطيل حول المعادلات.</string>
+    <string name="about_text">منحنى — راسم دوال عربي بواجهة داكنة وتدرجات بنفسجية.\n\nيدعم الدوال الصريحة مثل y = x^2، والمعادلات الضمنية مثل x^2 + y^2 = 25، والمتباينات، مع تقريب وتمرير باللمس. يمكنك أيضًا استخراج المعادلات من صورة قديمة أو لقطة كاميرا مباشرة عبر تحديد مستطيل حول المعادلات.\n\nصُنع هذا التطبيق بالذكاء الاصطناعي.</string>
     <string name="zoom_in">تقريب</string>
     <string name="zoom_out">إبعاد</string>
     <string name="reset_view">إعادة ضبط العرض</string>
@@ -43,6 +48,7 @@
     <string name="empty_subtitle">أضف معادلة يدويًا أو استخرجها من صورة</string>
     <string name="equation_hint">مثال: y = x^2 - 4</string>
     <string name="invalid_equation">معادلة غير صالحة</string>
+    <string name="not_plottable">سيُحفظ النص كما هو، لكنه لن يُرسم حتى يكتمل</string>
     <string name="equation_label">معادلة</string>
     <string name="equations_panel">المعادلات</string>
     <string name="back">رجوع</string>
@@ -70,6 +76,8 @@
     <string name="opt_arrows">الأسهم</string>
     <string name="opt_x_axis">محور X</string>
     <string name="opt_y_axis">محور Y</string>
+    <string name="section_vars">المتغيرات</string>
+    <string name="opt_pretty_vars">كتابة X₁ و X₂ برموز سفلية</string>
     <string name="section_window">مدى العرض</string>
     <string name="apply_window">تطبيق المدى</string>
     <string name="window_invalid">مدى غير صالح</string>
@@ -82,6 +90,7 @@
 
     <!-- keyboard -->
     <string name="keyboard_basic">أساسي</string>
+    <string name="keyboard_vars">المتغيرات</string>
     <string name="keyboard_functions">الدوال</string>
     <string name="keyboard_calculus">التفاضل والتكامل</string>
     <string name="keyboard_advanced">متقدم</string>
@@ -111,8 +120,13 @@
     <!-- export -->
     <string name="export_image">تصدير صورة الرسم</string>
     <string name="export_text">تصدير المعادلات كنص</string>
+    <string name="export_project">تصدير ملف المشروع</string>
     <string name="share">مشاركة</string>
     <string name="share_graph">مشاركة الرسم البياني</string>
+    <string name="share_project">مشاركة المشروع</string>
+    <string name="project_ready">تم حفظ ملف المشروع</string>
+    <string name="project_open_failed">تعذر فتح ملف المشروع</string>
+    <string name="export_equations_title">المعادلات</string>
     <string name="import_equations">استيراد معادلات</string>
     <string name="export_failed">تعذر التصدير</string>
     <string name="export_ready">تم حفظ الملف</string>

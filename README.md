@@ -6,9 +6,14 @@ dark purple theme. **Built with AI.**
 - Plot functions, implicit equations and inequalities.
 - Full-screen equation editor with live graph preview.
 - Math keyboard with five categories and automatic bracket closing.
+- Equations are shown as written: implicit multiplication (`2x`, `3x₁`, `x₁x₂`)
+  and real symbols (`x₁`, `x²`, `≤`, `≥`) instead of code-like text.
+- Variable labels, including subscripts (`x₁`, `x₂`) or Arabic names.
 - Graph settings: grid, axis labels, arrows, X/Y axes, degrees/radians, zoom.
 - Import a photo and read equations offline, then correct them manually.
-- Export the graph as PNG, export equations as TXT, share and import.
+  Cropping is manual, and the handwriting reader groups lines automatically.
+- Export the graph as PNG with the equations written under it, export as TXT,
+  and share a `.munhana` project that opens directly in Munhana.
 - Works fully offline and needs no storage permission.
 
 ![Munhana home screen](docs/screenshots/home.png)
@@ -17,13 +22,13 @@ dark purple theme. **Built with AI.**
 **Requirements:** Android 7.0 (API 24) or newer, `arm64-v8a` or `armeabi-v7a`.
 
 **Download:** see [Releases](https://github.com/ZAIN-WZ/munhana/releases).
-The latest version is `1.1`.
+The latest version is `1.2`.
 
 **Build from source:**
 
 ```bash
 export ANDROID_HOME=/path/to/android-sdk   # platform 35 + build-tools 35.0.0
-bash build.sh                               # output: dist/munhana-1.1.apk
+bash build.sh                               # output: dist/munhana-1.2.apk
 ```
 
 The build script creates a local development key if none is provided.
@@ -40,23 +45,28 @@ The build script creates a local development key if none is provided.
 - رسم الدوال والمعادلات الضمنية والمتباينات.
 - محرّر معادلات بشاشة كاملة مع معاينة حيّة للرسم.
 - لوحة رياضيات بخمس فئات وإغلاق تلقائي للأقواس.
+- عرض المعادلات كما كُتبت: ضرب ضمني (`2x`، `3x₁`، `x₁x₂`) ورموز رياضية
+  حقيقية (`x₁`، `x²`، `≤`، `≥`) بدل صيغة تشبه الشيفرة.
+- تسمية المتغيرات، مع رموز سفلية (`x₁`، `x₂`) أو أسماء عربية.
 - إعدادات رسم: الشبكة، أرقام المحاور، الأسهم، محورا X/Y، درجات/راديان،
   ومدى العرض.
 - قراءة المعادلات من صورة دون اتصال، مع إمكانية التصحيح اليدوي.
-- تصدير الرسم PNG، تصدير المعادلات TXT، مشاركة واستيراد.
+  القص يدوي، وقارئ الكتابة اليدوية يجمع الأسطر تلقائيًا.
+- تصدير الرسم PNG مع كتابة المعادلات أسفله، وتصدير TXT، ومشاركة ملف
+  `.munhana` يُفتح مباشرة في منحنى.
 - يعمل دون إنترنت ولا يحتاج صلاحية تخزين.
 
 **المتطلبات:** أندرويد 7.0 (API 24) أو أحدث، ومعمارية `arm64-v8a` أو
 `armeabi-v7a`.
 
 **التحميل:** من صفحة [Releases](https://github.com/ZAIN-WZ/munhana/releases).
-أحدث إصدار هو `1.1`.
+أحدث إصدار هو `1.2`.
 
 **البناء من المصدر:**
 
 ```bash
 export ANDROID_HOME=/path/to/android-sdk   # platform 35 + build-tools 35.0.0
-bash build.sh                               # الناتج: dist/munhana-1.1.apk
+bash build.sh                               # الناتج: dist/munhana-1.2.apk
 ```
 
 ينشئ سكربت البناء مفتاح تطوير محليًا إن لم يوجد مفتاح.
