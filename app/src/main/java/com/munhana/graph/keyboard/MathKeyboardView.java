@@ -164,16 +164,17 @@ public class MathKeyboardView extends LinearLayout {
     // ------------------------------------------------------------- categories
 
     private void buildCategories() {
-        categories.add(new Category(R.string.keyboard_basic, 5, new Key[][]{
-                {k("x", "x", STYLE_OP), k("y", "y", STYLE_OP), k("x²", "^2", STYLE_OP),
-                        k("x³", "^3", STYLE_OP), k("xⁿ", "^", STYLE_OP)},
-                {k("(", "(", STYLE_FUNC), k(")", ")", STYLE_FUNC), k("÷", "/", STYLE_OP),
-                        k("×", "*", STYLE_OP), k("−", "-", STYLE_OP)},
-                {d("7"), d("8"), d("9"), k("√", "sqrt(", STYLE_FUNC), k("π", "pi", STYLE_FUNC)},
-                {d("4"), d("5"), d("6"), k("|x|", "abs(", STYLE_FUNC), k("≤", "<=", STYLE_OP)},
-                {d("1"), d("2"), d("3"), k("=", "=", STYLE_OP), k("≥", ">=", STYLE_OP)},
-                {d("0"), d("."), k("+", "+", STYLE_OP), k(",", ",", STYLE_OP),
-                        k("e", "e", STYLE_FUNC)}
+        categories.add(new Category(R.string.keyboard_basic, 6, new Key[][]{
+                {k("a/b", "()/()", STYLE_FUNC), k(">", ">", STYLE_OP),
+                        d("7"), d("8"), d("9"), k("÷", "/", STYLE_OP)},
+                {k("√", "sqrt(", STYLE_FUNC), k("x", "x", STYLE_OP),
+                        d("4"), d("5"), d("6"), k("×", "*", STYLE_OP)},
+                {k("x²", "^2", STYLE_OP), k("≤", "<=", STYLE_OP),
+                        d("1"), d("2"), d("3"), k("−", "-", STYLE_OP)},
+                {k("π", "pi", STYLE_FUNC), k("≥", ">=", STYLE_OP),
+                        d("0"), d("."), k("=", "=", STYLE_OP), k("+", "+", STYLE_OP)},
+                {k("(", "(", STYLE_FUNC), k(")", ")", STYLE_FUNC), k("y", "y", STYLE_OP),
+                        k(",", ",", STYLE_OP), k("e", "e", STYLE_FUNC), k("^", "^", STYLE_OP)}
         }));
 
         categories.add(new Category(R.string.keyboard_vars, 5, new Key[][]{

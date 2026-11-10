@@ -497,6 +497,8 @@ public class GraphView extends View {
         boolean greater = eq.relation.startsWith(">");
         float step = 6 * density;
         shadePaint.setColor(eq.color);
+        // setColor also overwrites alpha, so the fill level must be re-applied.
+        shadePaint.setAlpha(26);
         for (float y = 0; y < h; y += step) {
             float runStart = -1;
             for (float x = 0; x <= w; x += step) {
@@ -513,6 +515,11 @@ public class GraphView extends View {
                     canvas.drawRect(runStart, y, x, y + step, shadePaint);
                     runStart = -1;
                 }
+            }
+            // A run that reaches the right edge never meets an "outside" sample,
+            // so close it here; otherwise the right half of the region is lost.
+            if (runStart >= 0) {
+                canvas.drawRect(runStart, y, w, y + step, shadePaint);
             }
         }
     }

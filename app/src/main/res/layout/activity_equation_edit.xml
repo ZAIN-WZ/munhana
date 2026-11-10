@@ -85,6 +85,20 @@
             android:layout_margin="2dp" />
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/tvPretty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:minHeight="34dp"
+        android:textColor="@color/purple_light"
+        android:textDirection="ltr"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
     <EditText
         android:id="@+id/input"
         android:layout_width="match_parent"

@@ -4,6 +4,8 @@
 
 - Equations are displayed as written: implicit multiplication and real math
   symbols (`x₁`, `x²`, `≤`, `≥`), while the stored text stays editable.
+- Calculator-style six-column keyboard with fraction/root/power keys, plus a
+  live written-form preview above the input.
 - Variable labels with subscripts, plus a variables tab in the math keyboard.
 - Keyboard and cursor fixes, including the caret after deleting a character.
 - Exported PNG shows the equations under the graph.
@@ -32,6 +34,8 @@
 
 - عرض المعادلات كما كُتبت: ضرب ضمني ورموز رياضية حقيقية (`x₁`، `x²`، `≤`، `≥`)
   مع بقاء النص المخزَّن قابلًا للتحرير.
+- لوحة مفاتيح بستة أعمدة بأسلوب الآلة الحاسبة مع مفاتيح الكسر والجذر والأس،
+  ومعاينة نصية حيّة للمعادلة فوق حقل الإدخال.
 - تسمية المتغيرات برموز سفلية، وتبويب للمتغيرات في لوحة المفاتيح.
 - إصلاحات لوحة المفاتيح والمؤشر، بما فيها موضع المؤشر بعد حذف حرف.
 - صورة PNG المصدَّرة تعرض المعادلات أسفل الرسم.

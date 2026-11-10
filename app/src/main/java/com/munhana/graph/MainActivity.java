@@ -410,7 +410,7 @@ public class MainActivity extends Activity {
         }
         String text = buffer.toString("UTF-8");
 
-        equations.clear();
+        List<Equation> loaded = new ArrayList<>();
         JSONObject root = new JSONObject(text);
         JSONArray list = root.optJSONArray("equations");
         if (list != null) {
@@ -422,7 +422,7 @@ public class MainActivity extends Activity {
                 Equation e = Equation.fromText(t);
                 e.color = o.optInt("color", Equation.PALETTE[i % Equation.PALETTE.length]);
                 e.visible = o.optBoolean("visible", true);
-                equations.add(e);
+                loaded.add(e);
             }
         } else {
             // Plain list fallback, for hand-written project files.
@@ -431,9 +431,15 @@ public class MainActivity extends Activity {
             while ((line = reader.readLine()) != null) {
                 String t = line.trim();
                 if (t.isEmpty() || t.startsWith("#")) continue;
-                addEquation(t, -1, false);
+                try {
+                    loaded.add(Equation.fromText(t));
+                } catch (Exception ignored) { }
             }
         }
+        if (loaded.isEmpty()) return 0;
+        // Only replace the current work once the file has been read successfully.
+        equations.clear();
+        equations.addAll(loaded);
         persist();
         return equations.size();
     }

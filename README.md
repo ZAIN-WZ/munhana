@@ -5,7 +5,9 @@ dark purple theme. **Built with AI.**
 
 - Plot functions, implicit equations and inequalities.
 - Full-screen equation editor with live graph preview.
-- Math keyboard with five categories and automatic bracket closing.
+- Equation editor with a live written-form preview above the input, a
+  calculator-style six-column keyboard with a fraction/root/power column, and
+  undo plus cursor keys.
 - Equations are shown as written: implicit multiplication (`2x`, `3x₁`, `x₁x₂`)
   and real symbols (`x₁`, `x²`, `≤`, `≥`) instead of code-like text.
 - Variable labels, including subscripts (`x₁`, `x₂`) or Arabic names.
@@ -44,7 +46,8 @@ The build script creates a local development key if none is provided.
 
 - رسم الدوال والمعادلات الضمنية والمتباينات.
 - محرّر معادلات بشاشة كاملة مع معاينة حيّة للرسم.
-- لوحة رياضيات بخمس فئات وإغلاق تلقائي للأقواس.
+- محرّر مع معاينة نصية للمعادلة كما كُتبت فوق حقل الإدخال، ولوحة مفاتيح
+  بستة أعمدة تضم عمود القوالب (كسر، جذر، أس) مع تراجع وأسهم للمؤشر.
 - عرض المعادلات كما كُتبت: ضرب ضمني (`2x`، `3x₁`، `x₁x₂`) ورموز رياضية
   حقيقية (`x₁`، `x²`، `≤`، `≥`) بدل صيغة تشبه الشيفرة.
 - تسمية المتغيرات، مع رموز سفلية (`x₁`، `x₂`) أو أسماء عربية.

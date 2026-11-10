@@ -2,7 +2,12 @@
 
 - Equations are shown as written: implicit multiplication and real math
   symbols (`x₁`, `x²`, `≤`, `≥`), with editable stored text.
+- Calculator-style six-column keyboard with fraction/root/power keys, and a
+  live written-form preview above the input.
 - Variable labels with subscripts, and a variables tab in the math keyboard.
+- Inequality shading is now a light tint over both sides of a region, and no
+  longer loses the right half of the graph.
+- Opening a project file that cannot be read no longer clears the current work.
 - Keyboard and cursor fixes, including the caret after deleting a character.
 - Exported PNG shows the equations under the graph.
 - `.munhana` projects can be shared and open directly in Munhana.
@@ -17,7 +22,12 @@
 
 - عرض المعادلات كما كُتبت: ضرب ضمني ورموز رياضية حقيقية (`x₁`، `x²`، `≤`، `≥`)
   مع بقاء النص المخزَّن قابلًا للتحرير.
+- لوحة مفاتيح بستة أعمدة بأسلوب الآلة الحاسبة مع مفاتيح الكسر والجذر والأس،
+  ومعاينة نصية حيّة للمعادلة فوق حقل الإدخال.
 - تسمية المتغيرات برموز سفلية، وتبويب للمتغيرات في لوحة المفاتيح.
+- تظليل المتباينات أصبح خفيفًا ويغطي الجهتين، ولم يعد يُفقد النصف الأيمن من
+  الرسم.
+- فتح ملف مشروع غير قابل للقراءة لم يعد يمسح المعادلات الحالية.
 - إصلاحات لوحة المفاتيح والمؤشر، بما فيها موضع المؤشر بعد حذف حرف.
 - صورة PNG المصدَّرة تعرض المعادلات أسفل الرسم.
 - مشاركة ملفات `.munhana` وفتحها مباشرة في منحنى.

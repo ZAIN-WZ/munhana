@@ -16,6 +16,7 @@ import com.munhana.graph.graph.GraphSettings;
 import com.munhana.graph.graph.GraphView;
 import com.munhana.graph.keyboard.MathKeyboardView;
 import com.munhana.graph.math.Equation;
+import com.munhana.graph.math.EquationText;
 
 import java.util.ArrayDeque;
 import java.util.Collections;
@@ -32,6 +33,7 @@ public class EquationEditActivity extends Activity {
     public static final String EXTRA_RESULT = "com.munhana.graph.EXTRA_EDIT_RESULT";
 
     private EditText input;
+    private TextView pretty;
     private GraphView preview;
     private View previewBox;
     private TextView error;
@@ -52,6 +54,7 @@ public class EquationEditActivity extends Activity {
         setContentView(R.layout.activity_equation_edit);
 
         input = findViewById(R.id.input);
+        pretty = findViewById(R.id.tvPretty);
         preview = findViewById(R.id.preview);
         previewBox = findViewById(R.id.previewBox);
         error = findViewById(R.id.tvError);
@@ -111,6 +114,7 @@ public class EquationEditActivity extends Activity {
                     while (history.size() > 60) history.removeLast();
                     lastText = now;
                 }
+                showPretty(now);
                 validate();
             }
         });
@@ -143,6 +147,9 @@ public class EquationEditActivity extends Activity {
             // Definite accumulation from 0 up to the current x.
             insert = "integral(,0)";
             cursorBack = 3;
+        } else if (insert.equals("()/()")) {
+            // Fraction template: start typing in the numerator.
+            cursorBack = 4;
         } else if (insert.endsWith("(")) {
             insert = insert + ")";
             cursorBack = 1;
@@ -205,6 +212,7 @@ public class EquationEditActivity extends Activity {
 
     private boolean validate() {
         String raw = input.getText() == null ? "" : input.getText().toString().trim();
+        showPretty(raw);
         if (raw.isEmpty()) {
             error.setVisibility(View.GONE);
             save.setEnabled(false);
@@ -228,6 +236,12 @@ public class EquationEditActivity extends Activity {
             preview.setEquations(Collections.emptyList());
         }
         return true;
+    }
+
+    private void showPretty(String raw) {
+        if (pretty == null) return;
+        String s = raw == null ? "" : raw.trim();
+        pretty.setText(s.isEmpty() ? "" : EquationText.pretty(s));
     }
 
     private void save() {
