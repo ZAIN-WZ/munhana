@@ -6,6 +6,7 @@
   symbols (`x₁`, `x²`, `≤`, `≥`), while the stored text stays editable.
 - Calculator-style six-column keyboard with fraction/root/power keys, plus a
   live written-form preview above the input.
+- "Fit equations" action, applied after import and when opening a project.
 - Variable labels with subscripts, plus a variables tab in the math keyboard.
 - Keyboard and cursor fixes, including the caret after deleting a character.
 - Exported PNG shows the equations under the graph.

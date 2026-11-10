@@ -43,6 +43,7 @@
     <string name="zoom_in">تقريب</string>
     <string name="zoom_out">إبعاد</string>
     <string name="reset_view">إعادة ضبط العرض</string>
+    <string name="fit_equations">ملاءمة المعادلات</string>
 
     <string name="empty_title">لا توجد معادلات بعد</string>
     <string name="empty_subtitle">أضف معادلة يدويًا أو استخرجها من صورة</string>

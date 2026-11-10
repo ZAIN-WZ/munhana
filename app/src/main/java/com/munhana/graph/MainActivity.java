@@ -94,16 +94,19 @@ public class MainActivity extends Activity {
         findViewById(R.id.btnMore).setOnClickListener(this::showOverflow);
 
         load();
-        handleIntent(getIntent());
+        boolean opened = handleIntent(getIntent());
         sync();
-        graphView.post(() -> graphView.resetView());
+        graphView.post(opened ? graphView::fitToEquations : graphView::resetView);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        if (handleIntent(intent)) sync();
+        if (handleIntent(intent)) {
+            sync();
+            fitGraph();
+        }
     }
 
     // --------------------------------------------------------------- equations
@@ -259,6 +262,7 @@ public class MainActivity extends Activity {
                 for (String s : found) if (addEquation(s, -1, false)) added++;
                 persist();
                 sync();
+                fitGraph();
                 toast(added + " " + getString(R.string.equation_label) + " — " + getString(R.string.done));
             }
         } else if (requestCode == REQ_EDIT) {
@@ -303,6 +307,7 @@ public class MainActivity extends Activity {
                     int n = readEquations(data.getData());
                     persist();
                     sync();
+                    fitGraph();
                     toast(n + " " + getString(R.string.equation_label));
                 } catch (Exception e) {
                     toast(getString(R.string.import_failed));
@@ -516,6 +521,7 @@ public class MainActivity extends Activity {
     private void showOverflow(View anchor) {
         PopupMenu menu = new PopupMenu(this, anchor);
         menu.getMenu().add(0, 1, 0, R.string.reset_view);
+        menu.getMenu().add(0, 11, 0, R.string.fit_equations);
         menu.getMenu().add(0, 2, 1, R.string.graph_settings);
         menu.getMenu().add(0, 3, 2, R.string.quick_examples);
         menu.getMenu().add(0, 4, 3, R.string.export_image);
@@ -528,6 +534,7 @@ public class MainActivity extends Activity {
         menu.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case 1: graphView.resetView(); return true;
+                case 11: fitGraph(); return true;
                 case 2: showSettings(); return true;
                 case 3: showExamples(); return true;
                 case 4: exportImage(); return true;
@@ -618,6 +625,10 @@ public class MainActivity extends Activity {
             persist();
             prefs().edit().putBoolean(KEY_SEEDED, true).apply();
         }
+    }
+
+    private void fitGraph() {
+        graphView.post(graphView::fitToEquations);
     }
 
     private void toast(String msg) {

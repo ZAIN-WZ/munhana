@@ -167,6 +167,62 @@ public class GraphView extends View {
         invalidate();
     }
 
+    /**
+     * Widens the default window so boundaries far from the origin are visible.
+     * Imported constraints often cross the axes at 40 or 300, where the plain
+     * -10..10 window would show only empty shading.
+     */
+    public void fitToEquations() {
+        if (equations.isEmpty() || getWidth() <= 0 || getHeight() <= 0) {
+            resetView();
+            return;
+        }
+        double lo = -10, x1 = 10, ylo = -10, y1 = 10;
+        // Log-spaced probes along both axes; 1e-2 .. 1e4.
+        double[] t = new double[121];
+        for (int i = 0; i < 60; i++) {
+            double v = Math.pow(10, (i - 20) / 5.0);
+            t[i * 2] = v;
+            t[i * 2 + 1] = -v;
+        }
+        t[120] = 0;
+        java.util.Arrays.sort(t);
+
+        for (Equation eq : equations) {
+            if (eq.g == null || !eq.visible) continue;
+            for (int i = 1; i < t.length; i++) {
+                double a = safeValue(eq, t[i - 1], 0);
+                double b = safeValue(eq, t[i], 0);
+                double c = crossing(a, b, t[i - 1], t[i]);
+                if (!Double.isNaN(c)) { lo = Math.min(lo, c * 1.15); x1 = Math.max(x1, c * 1.15); }
+                a = safeValue(eq, 0, t[i - 1]);
+                b = safeValue(eq, 0, t[i]);
+                c = crossing(a, b, t[i - 1], t[i]);
+                if (!Double.isNaN(c)) { ylo = Math.min(ylo, c * 1.15); y1 = Math.max(y1, c * 1.15); }
+            }
+        }
+        double sx = getWidth() / Math.max(1e-9, x1 - lo);
+        double sy = getHeight() / Math.max(1e-9, y1 - ylo);
+        ppu = clamp(Math.min(sx, sy), 1e-4, 1e7);
+        centerX = (lo + x1) / 2.0;
+        centerY = (ylo + y1) / 2.0;
+        invalidate();
+    }
+
+    private static double safeValue(Equation eq, double x, double y) {
+        try {
+            double v = eq.g.eval(x, y);
+            return (Double.isNaN(v) || Double.isInfinite(v)) ? 0 : v;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private static double crossing(double a, double b, double ta, double tb) {
+        if ((a > 0) == (b > 0)) return Double.NaN;
+        return ta + (tb - ta) * (Math.abs(a) / (Math.abs(a) + Math.abs(b)));
+    }
+
     /** Renders the current graph, with an equation footer, for export / sharing. */
     public Bitmap exportBitmap() {
         int w = getWidth(), h = getHeight();
