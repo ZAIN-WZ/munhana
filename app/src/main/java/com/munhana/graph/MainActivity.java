@@ -96,7 +96,10 @@ public class MainActivity extends Activity {
         load();
         boolean opened = handleIntent(getIntent());
         sync();
-        graphView.post(opened ? graphView::fitToEquations : graphView::resetView);
+        // Saved work may sit far from the origin (imported constraints often do),
+        // so frame it on start-up instead of showing empty space.
+        graphView.post(opened || !equations.isEmpty()
+                ? graphView::fitToEquations : graphView::resetView);
     }
 
     @Override
