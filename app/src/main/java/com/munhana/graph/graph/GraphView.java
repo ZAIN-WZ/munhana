@@ -67,7 +67,7 @@ public class GraphView extends View {
         gridMajor.setColor(0xFF2A1F3C);
         gridMajor.setStrokeWidth(1.2f);
         axisPaint.setColor(0xFF6E5A88);
-        axisPaint.setStrokeWidth(2f);
+        axisPaint.setStrokeWidth(1.5f);
         labelPaint.setColor(0xFF9C8CB8);
         labelPaint.setTextSize(10 * density);
         borderPaint.setColor(0xFF2A1F3C);
@@ -75,14 +75,14 @@ public class GraphView extends View {
         borderPaint.setStrokeWidth(1f);
 
         curvePaint.setStyle(Paint.Style.STROKE);
-        curvePaint.setStrokeWidth(3.6f * density);
+        curvePaint.setStrokeWidth(2f * density);
         curvePaint.setStrokeCap(Paint.Cap.ROUND);
         curvePaint.setStrokeJoin(Paint.Join.ROUND);
 
         glowPaint.setStyle(Paint.Style.STROKE);
-        glowPaint.setStrokeWidth(10f * density);
+        glowPaint.setStrokeWidth(4.8f * density);
         glowPaint.setStrokeCap(Paint.Cap.ROUND);
-        glowPaint.setAlpha(32);
+        glowPaint.setAlpha(18);
 
         shadePaint.setStyle(Paint.Style.FILL);
         shadePaint.setAlpha(26);

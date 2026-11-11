@@ -5,7 +5,7 @@
   export/import and improved offline OCR.
 - `munhana-1.2.apk` — current release: symbolic equations (`√`, `π`, `x²`,
   `x₁`, `≤`, `≥`), calculator-style keyboard, auto-fit, cleaner settings,
-  thicker curves and inequality shading off by default.
+  fine curve strokes and inequality shading off by default.
 
 All files are signed with the author's key, so each version installs as an
 update over the previous one. Verify integrity with `SHA256SUMS.txt`.
@@ -22,7 +22,7 @@ README or the download page at <https://zain-wz.github.io/munhana/>.
   وقراءة صور محسّنة.
 - `munhana-1.2.apk` — الإصدار الحالي: معادلات رمزية (`√`، `π`، `x²`، `x₁`،
   `≤`، `≥`)، لوحة مفاتيح بنمط الآلة الحاسبة، ملاءمة تلقائية، إعدادات أنظف،
-  خطوط أعرض، وتظليل المتباينات معطّل افتراضيًا.
+  خطوط رفيعة، وتظليل المتباينات معطّل افتراضيًا.
 
 كل الملفات موقّعة بمفتاح المؤلف، لذا يُثبَّت كل إصدار كتحديث فوق سابقه.
 تحقق من السلامة عبر `SHA256SUMS.txt`.
