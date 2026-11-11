@@ -98,8 +98,8 @@ public class MainActivity extends Activity {
         sync();
         // Saved work may sit far from the origin (imported constraints often do),
         // so frame it on start-up instead of showing empty space.
-        graphView.post(opened || !equations.isEmpty()
-                ? graphView::fitToEquations : graphView::resetView);
+        boolean frame = (opened || !equations.isEmpty()) && settings.autoFit;
+        graphView.post(frame ? graphView::fitToEquations : graphView::resetView);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
         setIntent(intent);
         if (handleIntent(intent)) {
             sync();
-            fitGraph();
+            autoFit();
         }
     }
 
@@ -164,7 +164,7 @@ public class MainActivity extends Activity {
             prefix.setVisibility(View.GONE);
 
             colorBar.setBackgroundTintList(ColorStateList.valueOf(eq.color));
-            text.setText(EquationText.pretty(body, settings.prettyVariables));
+            text.setText(EquationText.pretty(body));
             int color = !eq.visible ? Color.parseColor("#7A6A93")
                     : !eq.plottable ? Color.parseColor("#B7A6D0")
                     : Color.parseColor("#F3E9FF");
@@ -183,6 +183,7 @@ public class MainActivity extends Activity {
                     equations.remove(index);
                     persist();
                     sync();
+                    autoFit();
                 }
             });
 
@@ -265,7 +266,7 @@ public class MainActivity extends Activity {
                 for (String s : found) if (addEquation(s, -1, false)) added++;
                 persist();
                 sync();
-                fitGraph();
+                autoFit();
                 toast(added + " " + getString(R.string.equation_label) + " — " + getString(R.string.done));
             }
         } else if (requestCode == REQ_EDIT) {
@@ -275,6 +276,7 @@ public class MainActivity extends Activity {
                 if (text != null && addEquation(text, index, true)) {
                     persist();
                     sync();
+                    autoFit();
                 }
             }
         } else if (requestCode == REQ_EXPORT_IMAGE) {
@@ -310,7 +312,7 @@ public class MainActivity extends Activity {
                     int n = readEquations(data.getData());
                     persist();
                     sync();
-                    fitGraph();
+                    autoFit();
                     toast(n + " " + getString(R.string.equation_label));
                 } catch (Exception e) {
                     toast(getString(R.string.import_failed));
@@ -575,6 +577,7 @@ public class MainActivity extends Activity {
                     addEquation(items[which], -1, true);
                     persist();
                     sync();
+                    autoFit();
                 })
                 .show();
     }
@@ -632,6 +635,11 @@ public class MainActivity extends Activity {
 
     private void fitGraph() {
         graphView.post(graphView::fitToEquations);
+    }
+
+    /** Frames the graph after an edit, unless the user turned auto-fit off. */
+    private void autoFit() {
+        if (settings.autoFit) fitGraph();
     }
 
     private void toast(String msg) {

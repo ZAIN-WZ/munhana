@@ -5,13 +5,15 @@ dark purple theme. **Built with AI.**
 
 - Plot functions, implicit equations and inequalities.
 - Full-screen equation editor with live graph preview.
-- Equation editor with a live written-form preview above the input, a
-  calculator-style six-column keyboard with a fraction/root/power column, and
-  undo plus cursor keys.
-- Equations are shown as written: implicit multiplication (`2x`, `3x₁`, `x₁x₂`)
-  and real symbols (`x₁`, `x²`, `≤`, `≥`) instead of code-like text.
-- Variable labels, including subscripts (`x₁`, `x₂`) or Arabic names.
-- Graph settings: grid, axis labels, arrows, X/Y axes, degrees/radians, zoom.
+- Equation editor with a live written-form preview and a calculator-style
+  keyboard: template column, symbol column, number pad and operator column,
+  plus function, trigonometry, calculus, symbols and variable tabs.
+- Everything is written as maths, never as code: `√`, `∛`, `π`, `x²`, `x₁`,
+  `≤`, `≥`, `|x|`, `⌊x⌋`; function keys insert symbols directly.
+- Auto-fit: the graph frames all curves whenever the equation list changes;
+  pan and zoom stay fully manual afterwards.
+- Graph settings: grid, axis labels, arrows, X/Y axes, inequality shading
+  (off by default), auto-fit, degrees/radians and a custom window.
 - Import a photo and read equations offline, then correct them manually.
   Cropping is manual, and the handwriting reader groups lines automatically.
 - Export the graph as PNG with the equations written under it, export as TXT,
@@ -23,8 +25,17 @@ dark purple theme. **Built with AI.**
 
 **Requirements:** Android 7.0 (API 24) or newer, `arm64-v8a` or `armeabi-v7a`.
 
-**Download:** see [Releases](https://github.com/ZAIN-WZ/munhana/releases).
-The latest version is `1.2`.
+**Download:** [download page](https://zain-wz.github.io/munhana/) or
+[Releases](https://github.com/ZAIN-WZ/munhana/releases). The latest version is `1.2`.
+
+GitHub release downloads redirect to a host that is sometimes blocked in Syria.
+These mirrors serve the same APK without a VPN:
+
+| Version | jsDelivr (no VPN) | Statically | GitHub Pages |
+| --- | --- | --- | --- |
+| 1.2 | [munhana-1.2.apk](https://cdn.jsdelivr.net/gh/ZAIN-WZ/munhana@main/release-assets/munhana-1.2.apk) | [mirror](https://cdn.statically.io/gh/ZAIN-WZ/munhana/main/release-assets/munhana-1.2.apk) | [mirror](https://zain-wz.github.io/munhana/release-assets/munhana-1.2.apk) |
+| 1.1 | [munhana-1.1.apk](https://cdn.jsdelivr.net/gh/ZAIN-WZ/munhana@v1.1/release-assets/munhana-1.1.apk) | [mirror](https://cdn.statically.io/gh/ZAIN-WZ/munhana/v1.1/release-assets/munhana-1.1.apk) | [mirror](https://zain-wz.github.io/munhana/release-assets/munhana-1.1.apk) |
+| 1.0 | [munhana-1.0.apk](https://cdn.jsdelivr.net/gh/ZAIN-WZ/munhana@v1.0/release-assets/munhana-1.0.apk) | [mirror](https://cdn.statically.io/gh/ZAIN-WZ/munhana/v1.0/release-assets/munhana-1.0.apk) | [mirror](https://zain-wz.github.io/munhana/release-assets/munhana-1.0.apk) |
 
 **Build from source:**
 
@@ -46,13 +57,15 @@ The build script creates a local development key if none is provided.
 
 - رسم الدوال والمعادلات الضمنية والمتباينات.
 - محرّر معادلات بشاشة كاملة مع معاينة حيّة للرسم.
-- محرّر مع معاينة نصية للمعادلة كما كُتبت فوق حقل الإدخال، ولوحة مفاتيح
-  بستة أعمدة تضم عمود القوالب (كسر، جذر، أس) مع تراجع وأسهم للمؤشر.
-- عرض المعادلات كما كُتبت: ضرب ضمني (`2x`، `3x₁`، `x₁x₂`) ورموز رياضية
-  حقيقية (`x₁`، `x²`، `≤`، `≥`) بدل صيغة تشبه الشيفرة.
-- تسمية المتغيرات، مع رموز سفلية (`x₁`، `x₂`) أو أسماء عربية.
-- إعدادات رسم: الشبكة، أرقام المحاور، الأسهم، محورا X/Y، درجات/راديان،
-  ومدى العرض.
+- محرّر بمعاينة حيّة ولوحة مفاتيح على نمط الآلة الحاسبة: عمود قوالب، عمود
+  رموز، لوحة أرقام، عمود عمليات، وتبويبات للدوال والمثلثات والتفاضل والرموز
+  والمتغيرات.
+- كل شيء يُكتب رياضيات لا شيفرة: `√`، `∛`، `π`، `x²`، `x₁`، `≤`، `≥`،
+  `|x|`، `⌊x⌋`؛ ومفاتيح الدوال تُدرج الرموز مباشرة.
+- ملاءمة تلقائية: يُضبط العرض ليُظهر كل المنحنيات عند أي تغيير في المعادلات،
+  مع بقاء التكبير والتحريك بيدك.
+- إعدادات الرسم: الشبكة، أرقام المحاور، الأسهم، محورا X/Y، تظليل المتباينات
+  (معطّل افتراضيًا)، الملاءمة التلقائية، درجات/راديان، ومدى عرض مخصّص.
 - قراءة المعادلات من صورة دون اتصال، مع إمكانية التصحيح اليدوي.
   القص يدوي، وقارئ الكتابة اليدوية يجمع الأسطر تلقائيًا.
 - تصدير الرسم PNG مع كتابة المعادلات أسفله، وتصدير TXT، ومشاركة ملف
@@ -62,8 +75,17 @@ The build script creates a local development key if none is provided.
 **المتطلبات:** أندرويد 7.0 (API 24) أو أحدث، ومعمارية `arm64-v8a` أو
 `armeabi-v7a`.
 
-**التحميل:** من صفحة [Releases](https://github.com/ZAIN-WZ/munhana/releases).
-أحدث إصدار هو `1.2`.
+**التحميل:** [صفحة التحميل](https://zain-wz.github.io/munhana/) أو
+[Releases](https://github.com/ZAIN-WZ/munhana/releases). أحدث إصدار هو `1.2`.
+
+تنبيه: تحميل إصدارات GitHub يُحوَّل إلى خادم قد يكون محجوبًا في سوريا.
+الروابط التالية تعطي نفس الملف بدون VPN:
+
+| الإصدار | jsDelivr (بدون VPN) | Statically | GitHub Pages |
+| --- | --- | --- | --- |
+| 1.2 | [munhana-1.2.apk](https://cdn.jsdelivr.net/gh/ZAIN-WZ/munhana@main/release-assets/munhana-1.2.apk) | [بديل](https://cdn.statically.io/gh/ZAIN-WZ/munhana/main/release-assets/munhana-1.2.apk) | [بديل](https://zain-wz.github.io/munhana/release-assets/munhana-1.2.apk) |
+| 1.1 | [munhana-1.1.apk](https://cdn.jsdelivr.net/gh/ZAIN-WZ/munhana@v1.1/release-assets/munhana-1.1.apk) | [بديل](https://cdn.statically.io/gh/ZAIN-WZ/munhana/v1.1/release-assets/munhana-1.1.apk) | [بديل](https://zain-wz.github.io/munhana/release-assets/munhana-1.1.apk) |
+| 1.0 | [munhana-1.0.apk](https://cdn.jsdelivr.net/gh/ZAIN-WZ/munhana@v1.0/release-assets/munhana-1.0.apk) | [بديل](https://cdn.statically.io/gh/ZAIN-WZ/munhana/v1.0/release-assets/munhana-1.0.apk) | [بديل](https://zain-wz.github.io/munhana/release-assets/munhana-1.0.apk) |
 
 **البناء من المصدر:**
 

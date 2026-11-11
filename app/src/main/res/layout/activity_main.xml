@@ -115,14 +115,6 @@
                     android:src="@drawable/ic_fit" />
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                android:layout_margin="12dp"
-                android:text="@string/paragraph_hint"
-                android:textColor="#887A6A93"
-                android:textSize="10sp" />
         </FrameLayout>
     </LinearLayout>
 

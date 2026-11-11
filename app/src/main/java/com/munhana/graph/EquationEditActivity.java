@@ -73,8 +73,11 @@ public class EquationEditActivity extends Activity {
 
         String initial = getIntent().getStringExtra(EXTRA_TEXT);
         if (initial != null && !initial.isEmpty()) {
-            input.setText(initial);
-            input.setSelection(initial.length());
+            // Show the equation in its written form; the parser normalises the
+            // symbols back to ASCII, so editing stays lossless.
+            String shown = EquationText.pretty(initial);
+            input.setText(shown);
+            input.setSelection(shown.length());
         }
         lastText = input.getText() == null ? "" : input.getText().toString();
         input.setShowSoftInputOnFocus(false);
@@ -150,6 +153,10 @@ public class EquationEditActivity extends Activity {
         } else if (insert.equals("()/()")) {
             // Fraction template: start typing in the numerator.
             cursorBack = 4;
+        } else if (insert.equals("||") || insert.equals("\u230A\u230B")
+                || insert.equals("\u2308\u2309")) {
+            // Paired glyphs: put the caret between the two bars.
+            cursorBack = 1;
         } else if (insert.endsWith("(")) {
             insert = insert + ")";
             cursorBack = 1;

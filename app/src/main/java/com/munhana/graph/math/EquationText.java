@@ -111,12 +111,30 @@ public final class EquationText {
         String s = Expression.normalize(raw).replaceAll("\\s+", "");
         s = s.replace("<=", "\u2264").replace(">=", "\u2265").replace("!=", "\u2260");
 
+        // Function names become the symbols they stand for: no "sqrt(" or
+        // "floor(" ever reaches the screen.
+        s = call(s, "sqrt", "\u221A(", ")");
+        s = call(s, "cbrt", "\u221B(", ")");
+        s = call(s, "abs", "|", "|");
+        s = call(s, "floor", "\u230A", "\u230B");
+        s = call(s, "ceil", "\u2308", "\u2309");
+        s = s.replace("log10(", "log\u2081\u2080(").replace("log2(", "log\u2082(");
+        s = s.replace("nthroot(", "\u207F\u221A(");
+        s = s.replace("nderiv(", "d/dx(");
+        s = s.replace("integral(", "\u222B(");
+        s = s.replace("sign(", "sgn(");
+
+        // Constants.
+        s = s.replaceAll("(?<![a-z])pi", "\u03C0");
+        s = s.replaceAll("(?<![a-z])tau", "\u03C4");
+        s = s.replaceAll("(?<![a-z])phi", "\u03C6");
+
         // Juxtaposition reads like real algebra: 2*x -> 2x, 3*(x+1) -> 3(x+1).
-        s = s.replaceAll("(?<=[0-9A-Za-z)])[*\u00B7](?=[A-Za-z(])", "");
+        s = s.replaceAll("(?<=[0-9A-Za-z)\\u2080-\\u2089\\u03C0\\u03C4\\u03C6])[*\\u00B7](?=[A-Za-z(\\u03C0\\u03C4\\u03C6\\u221A\\u221B])", "");
         s = s.replace("*", "\u00D7");
 
-        s = s.replaceAll("\\^\\s*([0-9]{1,2})", "\u0001$1\u0002");
-        s = toScript(s, '\u0001', '\u0002', true);
+        // Powers: digits and simple variable exponents become superscripts.
+        s = superscripts(s);
 
         if (subscripts) {
             StringBuilder out = new StringBuilder();
@@ -138,9 +156,98 @@ public final class EquationText {
             s = out.toString();
         }
 
-        s = s.replaceAll("(?<=[0-9A-Za-z)\u2080-\u2089\u2070-\u2079]) ?([+\\-=\u2264\u2265\u2260])", " $1 ");
+        s = s.replaceAll("(?<=[0-9A-Za-z)\u2080-\u2089\u00B2\u00B3\u2070-\u2079]) ?([+\\-=\u2264\u2265\u2260])", " $1 ");
         s = s.replaceAll(" +", " ").trim();
         return s;
+    }
+
+    /** Replaces name(args) with open+args+close, matching nested brackets. */
+    private static String call(String s, String name, String open, String closeSymbol) {
+        String needle = name + "(";
+        int from = 0;
+        while (true) {
+            int at = s.indexOf(needle, from);
+            if (at < 0) return s;
+            int depth = 0, end = -1;
+            for (int i = at + needle.length() - 1; i < s.length(); i++) {
+                char c = s.charAt(i);
+                if (c == '(') depth++;
+                else if (c == ')') {
+                    depth--;
+                    if (depth == 0) { end = i; break; }
+                }
+            }
+            if (end < 0) {
+                s = s.substring(0, at) + open + s.substring(at + needle.length());
+                return s;
+            }
+            String inner = s.substring(at + needle.length(), end);
+            String replacement = open + inner + closeSymbol;
+            s = s.substring(0, at) + replacement + s.substring(end + 1);
+            from = at + replacement.length();
+        }
+    }
+
+    private static String superscripts(String s) {
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c != '^') { out.append(c); continue; }
+            int j = i + 1;
+            boolean paren = j < s.length() && s.charAt(j) == '(';
+            if (paren) j++;
+            boolean negative = j < s.length() && s.charAt(j) == '-';
+            if (negative) j++;
+            int digits = j;
+            while (digits < s.length() && Character.isDigit(s.charAt(digits)) && digits - j < 3) digits++;
+            // A numeric exponent always becomes a superscript, even when the
+            // next character is a variable (x^2y means x squared times y).
+            boolean closed = true;
+            if (paren) closed = digits < s.length() && s.charAt(digits) == ')';
+            if (digits > j && closed) {
+                if (negative) out.append('\u207B');
+                for (int k = j; k < digits; k++) out.append(sup(s.charAt(k)));
+                i = paren ? digits : digits - 1;
+                continue;
+            }
+            if (!paren && j < s.length()) {
+                char v = s.charAt(j);
+                char up = superLetter(v);
+                if (up != 0) { out.append(up); i = j; continue; }
+            }
+            out.append(c);
+        }
+        return out.toString();
+    }
+
+    private static char superLetter(char c) {
+        switch (c) {
+            case 'x': return '\u02E3';
+            case 'y': return '\u02B8';
+            case 'n': return '\u207F';
+            case 'a': return '\u1D43';
+            case 'b': return '\u1D47';
+            case 'c': return '\u1D9C';
+            case 'd': return '\u1D48';
+            case 'e': return '\u1D49';
+            case 'g': return '\u1D4D';
+            case 'h': return '\u02B0';
+            case 'i': return '\u2071';
+            case 'j': return '\u02B2';
+            case 'k': return '\u1D4F';
+            case 'l': return '\u02E1';
+            case 'm': return '\u1D50';
+            case 'o': return '\u1D52';
+            case 'p': return '\u1D56';
+            case 'r': return '\u02B3';
+            case 's': return '\u02E2';
+            case 't': return '\u1D57';
+            case 'u': return '\u1D58';
+            case 'v': return '\u1D5B';
+            case 'w': return '\u02B7';
+            case 'z': return '\u1DBB';
+            default: return 0;
+        }
     }
 
     private static char sub(char d) {

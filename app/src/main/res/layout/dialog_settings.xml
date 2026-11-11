@@ -93,14 +93,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="@string/section_vars" />
+            android:text="@string/section_calc" />
 
         <CheckBox
-            android:id="@+id/cbPrettyVars"
+            android:id="@+id/cbShade"
             style="@style/Munhana.Setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/opt_pretty_vars" />
+            android:text="@string/opt_shade" />
+
+        <CheckBox
+            android:id="@+id/cbAutoFit"
+            style="@style/Munhana.Setting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/opt_autofit" />
 
         <TextView
             style="@style/Munhana.Label"
@@ -113,7 +120,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:text="x"
+                android:textColor="@color/purple_light"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/etXMin"
@@ -137,7 +152,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:text="y"
+                android:textColor="@color/purple_light"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/etYMin"
@@ -198,20 +221,6 @@
                 android:text="@string/degrees" />
         </RadioGroup>
 
-        <TextView
-            style="@style/Munhana.Label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="@string/section_display" />
-
-        <CheckBox
-            android:id="@+id/cbProjector"
-            style="@style/Munhana.Setting"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/opt_projector" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -242,5 +251,14 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp" />
     </LinearLayout>
 </ScrollView>

@@ -13,11 +13,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.munhana.graph.graph.GraphSettings;
 
-/** Graph appearance and window settings panel. */
+/** Graph appearance, inequality and window settings panel. */
 public final class SettingsDialog {
 
     private SettingsDialog() { }
@@ -33,8 +34,8 @@ public final class SettingsDialog {
         CheckBox cbArrows = root.findViewById(R.id.cbArrows);
         CheckBox cbXAxis = root.findViewById(R.id.cbXAxis);
         CheckBox cbYAxis = root.findViewById(R.id.cbYAxis);
-        CheckBox cbProjector = root.findViewById(R.id.cbProjector);
-        CheckBox cbPrettyVars = root.findViewById(R.id.cbPrettyVars);
+        CheckBox cbShade = root.findViewById(R.id.cbShade);
+        CheckBox cbAutoFit = root.findViewById(R.id.cbAutoFit);
         EditText etXMin = root.findViewById(R.id.etXMin);
         EditText etXMax = root.findViewById(R.id.etXMax);
         EditText etYMin = root.findViewById(R.id.etYMin);
@@ -44,6 +45,16 @@ public final class SettingsDialog {
         Button btnApplyWindow = root.findViewById(R.id.btnApplyWindow);
         Button btnDefaults = root.findViewById(R.id.btnDefaults);
         Button btnDone = root.findViewById(R.id.btnDone);
+        TextView version = root.findViewById(R.id.tvVersion);
+
+        if (version != null) {
+            String name = "1.2";
+            try {
+                name = activity.getPackageManager()
+                        .getPackageInfo(activity.getPackageName(), 0).versionName;
+            } catch (Exception ignored) { }
+            version.setText(activity.getString(R.string.settings_footer, name));
+        }
 
         final boolean[] updating = {false};
 
@@ -61,8 +72,8 @@ public final class SettingsDialog {
             s.showArrows = cbArrows.isChecked();
             s.showXAxis = cbXAxis.isChecked();
             s.showYAxis = cbYAxis.isChecked();
-            s.projector = cbProjector.isChecked();
-            s.prettyVariables = cbPrettyVars.isChecked();
+            s.shadeInequalities = cbShade.isChecked();
+            s.autoFit = cbAutoFit.isChecked();
             s.degrees = rbDegrees.isChecked();
             push.run();
         };
@@ -72,8 +83,8 @@ public final class SettingsDialog {
         cbArrows.setOnClickListener(toggles);
         cbXAxis.setOnClickListener(toggles);
         cbYAxis.setOnClickListener(toggles);
-        cbProjector.setOnClickListener(toggles);
-        cbPrettyVars.setOnClickListener(toggles);
+        cbShade.setOnClickListener(toggles);
+        cbAutoFit.setOnClickListener(toggles);
         rbRadians.setOnClickListener(toggles);
         rbDegrees.setOnClickListener(toggles);
 
@@ -88,6 +99,8 @@ public final class SettingsDialog {
                         || Math.abs(yMin) > 1e9 || Math.abs(yMax) > 1e9) {
                     throw new NumberFormatException();
                 }
+                s.autoFit = false;
+                cbAutoFit.setChecked(false);
                 s.xMin = xMin; s.xMax = xMax; s.yMin = yMin; s.yMax = yMax;
                 push.run();
                 Toast.makeText(activity, R.string.done, Toast.LENGTH_SHORT).show();
@@ -100,12 +113,13 @@ public final class SettingsDialog {
             updating[0] = true;
             s.showGrid = true; s.showMinorGrid = true; s.showAxisNumbers = true;
             s.showArrows = true; s.showXAxis = true; s.showYAxis = true;
-            s.degrees = false; s.projector = false;
-            s.prettyVariables = true;
+            s.degrees = false;
+            s.shadeInequalities = false;
+            s.autoFit = true;
             GraphSettings.resetWindow(s);
             cbGrid.setChecked(true); cbMinor.setChecked(true); cbNumbers.setChecked(true);
             cbArrows.setChecked(true); cbXAxis.setChecked(true); cbYAxis.setChecked(true);
-            cbProjector.setChecked(false); cbPrettyVars.setChecked(true); rbRadians.setChecked(true);
+            cbShade.setChecked(false); cbAutoFit.setChecked(true); rbRadians.setChecked(true);
             fillWindow(etXMin, etXMax, etYMin, etYMax, s);
             updating[0] = false;
             push.run();
@@ -114,7 +128,7 @@ public final class SettingsDialog {
         btnDone.setOnClickListener(v -> dialog.dismiss());
 
         fillControls(s, cbGrid, cbMinor, cbNumbers, cbArrows, cbXAxis, cbYAxis,
-                cbProjector, cbPrettyVars, rbDegrees, etXMin, etXMax, etYMin, etYMax);
+                cbShade, cbAutoFit, rbDegrees, etXMin, etXMax, etYMin, etYMax);
 
         dialog.show();
         Window w = dialog.getWindow();
@@ -129,7 +143,7 @@ public final class SettingsDialog {
 
     private static void fillControls(GraphSettings s, CheckBox cbGrid, CheckBox cbMinor,
                                      CheckBox cbNumbers, CheckBox cbArrows, CheckBox cbXAxis,
-                                     CheckBox cbYAxis, CheckBox cbProjector, CheckBox cbPrettyVars,
+                                     CheckBox cbYAxis, CheckBox cbShade, CheckBox cbAutoFit,
                                      RadioButton rbDegrees,
                                      EditText etXMin, EditText etXMax, EditText etYMin, EditText etYMax) {
         cbGrid.setChecked(s.showGrid);
@@ -138,8 +152,8 @@ public final class SettingsDialog {
         cbArrows.setChecked(s.showArrows);
         cbXAxis.setChecked(s.showXAxis);
         cbYAxis.setChecked(s.showYAxis);
-        cbProjector.setChecked(s.projector);
-        cbPrettyVars.setChecked(s.prettyVariables);
+        cbShade.setChecked(s.shadeInequalities);
+        cbAutoFit.setChecked(s.autoFit);
         rbDegrees.setChecked(s.degrees);
         fillWindow(etXMin, etXMax, etYMin, etYMax, s);
     }

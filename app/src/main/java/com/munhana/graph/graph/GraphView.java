@@ -51,7 +51,7 @@ public class GraphView extends View {
 
     private boolean showGrid = true, showMinorGrid = true, showAxisNumbers = true;
     private boolean showArrows = true, showXAxis = true, showYAxis = true;
-    private boolean prettyVariables = true;
+    private boolean showShading = false;
     private double xMin = -10, xMax = 10, yMin = -10, yMax = 10;
 
     public GraphView(Context c) { super(c); init(c); }
@@ -67,7 +67,7 @@ public class GraphView extends View {
         gridMajor.setColor(0xFF2A1F3C);
         gridMajor.setStrokeWidth(1.2f);
         axisPaint.setColor(0xFF6E5A88);
-        axisPaint.setStrokeWidth(1.8f);
+        axisPaint.setStrokeWidth(2f);
         labelPaint.setColor(0xFF9C8CB8);
         labelPaint.setTextSize(10 * density);
         borderPaint.setColor(0xFF2A1F3C);
@@ -75,14 +75,14 @@ public class GraphView extends View {
         borderPaint.setStrokeWidth(1f);
 
         curvePaint.setStyle(Paint.Style.STROKE);
-        curvePaint.setStrokeWidth(2.4f * density);
+        curvePaint.setStrokeWidth(3.6f * density);
         curvePaint.setStrokeCap(Paint.Cap.ROUND);
         curvePaint.setStrokeJoin(Paint.Join.ROUND);
 
         glowPaint.setStyle(Paint.Style.STROKE);
-        glowPaint.setStrokeWidth(7f * density);
+        glowPaint.setStrokeWidth(10f * density);
         glowPaint.setStrokeCap(Paint.Cap.ROUND);
-        glowPaint.setAlpha(38);
+        glowPaint.setAlpha(32);
 
         shadePaint.setStyle(Paint.Style.FILL);
         shadePaint.setAlpha(26);
@@ -138,10 +138,10 @@ public class GraphView extends View {
         showArrows = s.showArrows;
         showXAxis = s.showXAxis;
         showYAxis = s.showYAxis;
-        prettyVariables = s.prettyVariables;
+        showShading = s.shadeInequalities;
         xMin = s.xMin; xMax = s.xMax; yMin = s.yMin; yMax = s.yMax;
         Expression.setDegrees(s.degrees);
-        labelPaint.setTextSize((s.projector ? 14 : 10) * density);
+        labelPaint.setTextSize(10 * density);
         if (windowChanged && getWidth() > 0 && getHeight() > 0) resetView();
         else invalidate();
     }
@@ -275,8 +275,7 @@ public class GraphView extends View {
             canvas.drawCircle(pad + 4 * d, y - 4 * d, 4 * d, dot);
             float tx = pad + 16 * d;
             float max = w - tx - pad;
-            String text = EquationText.pretty(
-                    eq.text.replace('\n', ' '), prettyVariables);
+            String text = EquationText.pretty(eq.text.replace('\n', ' '));
             if (item.measureText(text) > max) {
                 int keep = text.length();
                 while (keep > 1 && item.measureText(text.substring(0, keep) + "…") > max) keep--;
@@ -446,7 +445,7 @@ public class GraphView extends View {
                 drawVertical(canvas, eq, w, h);
                 break;
             case INEQUALITY:
-                drawShading(canvas, eq, w, h);
+                if (showShading) drawShading(canvas, eq, w, h);
                 drawContour(canvas, eq, w, h);
                 break;
             default:

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>منحنى — Munhana</title>
+<meta name="description" content="منحنى: راسم دوال ومعادلات عربي لأندرويد. Built with AI.">
+<style>
+  :root{
+    --bg:#0b0710; --panel:#161022; --panel2:#1d1430; --line:#2c1f43;
+    --text:#f3e9ff; --muted:#b9a8d6; --accent:#a855f7; --accent2:#c9a7ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,#241238 0%,var(--bg) 55%);
+       color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;line-height:1.6}
+  a{color:var(--accent2)}
+  header{max-width:960px;margin:0 auto;padding:48px 20px 8px;text-align:center}
+  .logo{width:86px;height:86px;border-radius:24px;background:linear-gradient(145deg,#a855f7,#6d28d9);
+        display:flex;align-items:center;justify-content:center;font-size:44px;margin:0 auto 14px;
+        box-shadow:0 12px 40px rgba(168,85,247,.35)}
+  h1{margin:0;font-size:34px}
+  .tag{color:var(--muted);margin-top:4px}
+  .ai{display:inline-block;margin-top:10px;padding:4px 12px;border:1px solid var(--line);
+      border-radius:999px;color:var(--accent2);font-size:12px;background:var(--panel)}
+  main{max-width:960px;margin:0 auto;padding:18px 20px 60px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;margin:14px 0}
+  .latest{background:linear-gradient(180deg,#221238,#161022);border-color:#4c2a75}
+  h2{font-size:18px;margin:0 0 8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+  .btn{display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;
+       background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:13px 16px;
+       color:var(--text);font-weight:600;transition:.15s}
+  .btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .btn.primary{background:linear-gradient(145deg,#a855f7,#7c3aed);border:0;color:#140a20}
+  .btn small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+  .btn.primary small{color:#2a1240}
+  .mirrors{list-style:none;padding:0;margin:8px 0 0}
+  .mirrors li{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;
+              padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .mirrors li:last-child{border-bottom:0}
+  code{background:#0e0917;border:1px solid var(--line);border-radius:6px;padding:1px 6px;
+       font-size:12px;word-break:break-all;color:#d8c8f2}
+  .muted{color:var(--muted);font-size:13px}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+  .features{columns:2;column-gap:28px;font-size:14px;margin:0;padding-inline-start:18px}
+  @media (max-width:620px){.features{columns:1}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">∿</div>
+  <h1>منحنى</h1>
+  <div class="tag">راسم الدوال والمعادلات — Arabic graphing calculator</div>
+  <div class="ai">صُنع بالذكاء الاصطناعي · Built with AI</div>
+</header>
+
+<main>
+  <section class="card latest">
+    <h2>الإصدار 1.2 — الأحدث</h2>
+    <p class="muted">إن لم يعمل رابط GitHub في سوريا فاستخدم أحد الروابط البديلة أدناه؛ كلها تعطي نفس الملف.</p>
+    <div class="grid">
+      <a class="btn primary" href="https://cdn.jsdelivr.net/gh/ZAIN-WZ/munhana@main/release-assets/munhana-1.2.apk">
+        <span>تحميل 1.2 <small>jsDelivr — يعمل غالبًا بلا VPN</small></span><span>⬇</span>
+      </a>
+      <a class="btn" href="https://github.com/ZAIN-WZ/munhana/releases/download/v1.2/munhana-1.2.apk">
+        <span>تحميل 1.2 <small>GitHub Releases</small></span><span>⬇</span>
+      </a>
+      <a class="btn" href="https://cdn.statically.io/gh/ZAIN-WZ/munhana/main/release-assets/munhana-1.2.apk">
+        <span>تحميل 1.2 <small>Statically CDN</small></span><span>⬇</span>
+      </a>
+      <a class="btn" href="release-assets/munhana-1.2.apk">
+        <span>تحميل 1.2 <small>GitHub Pages</small></span><span>⬇</span>
+      </a>
+    </div>
+    <p class="muted" style="margin-bottom:0">الحجم ‎≈ 15 MB · أندرويد 7.0 أو أحدث · arm64-v8a / armeabi-v7a</p>
+  </section>
+
+  <section class="card">
+    <h2>الإصدارات السابقة</h2>
+    <div class="grid">
+      <a class="btn" href="https://cdn.jsdelivr.net/gh/ZAIN-WZ/munhana@v1.1/release-assets/munhana-1.1.apk">
+        <span>منحنى 1.1 <small>jsDelivr</small></span><span>⬇</span>
+      </a>
+      <a class="btn" href="https://cdn.jsdelivr.net/gh/ZAIN-WZ/munhana@v1.0/release-assets/munhana-1.0.apk">
+        <span>منحنى 1.0 <small>jsDelivr</small></span><span>⬇</span>
+      </a>
+      <a class="btn" href="https://github.com/ZAIN-WZ/munhana/releases">
+        <span>كل الإصدارات <small>صفحة GitHub</small></span><span>↗</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>روابط بديلة (سوريا)</h2>
+    <p class="muted">GitHub يوجّه التحميل إلى خادم قد يكون محجوبًا. الروابط التالية تخدم نفس ملف APK مباشرة:</p>
+    <ul class="mirrors">
+      <li><span>jsDelivr</span><code>https://cdn.jsdelivr.net/gh/ZAIN-WZ/munhana@main/release-assets/munhana-1.2.apk</code></li>
+      <li><span>Statically</span><code>https://cdn.statically.io/gh/ZAIN-WZ/munhana/main/release-assets/munhana-1.2.apk</code></li>
+      <li><span>GitHub Pages</span><code>https://zain-wz.github.io/munhana/release-assets/munhana-1.2.apk</code></li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>المزايا</h2>
+    <ul class="features">
+      <li>رسم الدوال والمعادلات الضمنية والمتباينات</li>
+      <li>محرّر بمعاينة حيّة ولوحة مفاتيح رياضية كاملة</li>
+      <li>عرض المعادلات كما كُتبت: x₁, x², √, π, ≤, ≥</li>
+      <li>ملاءمة تلقائية للعرض عند تغيير المعادلات</li>
+      <li>قراءة المعادلات من صورة (بدون إنترنت)</li>
+      <li>تصدير PNG بالمعدلات أسفله، وTXT، ومشروع .munhana</li>
+      <li>واجهة عربية داكنة بالكامل</li>
+      <li>يعمل دون إنترنت ودون أذونات تخزين</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>بصمات الملفات (SHA-256)</h2>
+    <p class="muted">للتحقق من سلامة التنزيل: <code>sha256sum -c SHA256SUMS.txt</code></p>
+    <ul class="mirrors">
+      <li><span>1.0</span><code>23a0536be53c467d2bb506f58d6777a1c626060e065f15bd8548e29d4b3c8384</code></li>
+      <li><span>1.1</span><code>4ea62356073b4f0655319bca89029b921184af3f9b9c13ae80f256282212f2cc</code></li>
+      <li><span>1.2</span><code id="sha12">29ef753db1fb1a2396c65b84340b9a9e8ea4266f08a5cbb14ec1858062fa1a60</code></li>
+    </ul>
+  </section>
+
+  <footer>
+    منحنى 1.2 — صُنع بالذكاء الاصطناعي · Built with AI ·
+    <a href="https://github.com/ZAIN-WZ/munhana">GitHub</a>
+  </footer>
+</main>
+</body>
+</html>

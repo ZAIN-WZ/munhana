@@ -77,12 +77,12 @@ public class MathKeyboardView extends LinearLayout {
     }
 
     private static final class Category {
-        final int titleRes;
+        final String label;
         final Key[][] rows;
         final int columns;
 
-        Category(int titleRes, int columns, Key[][] rows) {
-            this.titleRes = titleRes;
+        Category(String label, int columns, Key[][] rows) {
+            this.label = label;
             this.columns = columns;
             this.rows = rows;
         }
@@ -122,10 +122,10 @@ public class MathKeyboardView extends LinearLayout {
         addToolKey(toolbar, "↶", () -> {
             if (listener != null) listener.onUndo();
         }, STYLE_OP, 1f);
-        addToolKey(toolbar, "◀", () -> {
+        addToolKey(toolbar, "←", () -> {
             if (listener != null) listener.onLeft();
         }, STYLE_OP, 1f);
-        addToolKey(toolbar, "▶", () -> {
+        addToolKey(toolbar, "→", () -> {
             if (listener != null) listener.onRight();
         }, STYLE_OP, 1f);
         addToolKey(toolbar, "↵", () -> {
@@ -164,84 +164,102 @@ public class MathKeyboardView extends LinearLayout {
     // ------------------------------------------------------------- categories
 
     private void buildCategories() {
-        categories.add(new Category(R.string.keyboard_basic, 6, new Key[][]{
-                {k("a/b", "()/()", STYLE_FUNC), k(">", ">", STYLE_OP),
-                        d("7"), d("8"), d("9"), k("÷", "/", STYLE_OP)},
-                {k("√", "sqrt(", STYLE_FUNC), k("x", "x", STYLE_OP),
-                        d("4"), d("5"), d("6"), k("×", "*", STYLE_OP)},
-                {k("x²", "^2", STYLE_OP), k("≤", "<=", STYLE_OP),
-                        d("1"), d("2"), d("3"), k("−", "-", STYLE_OP)},
-                {k("π", "pi", STYLE_FUNC), k("≥", ">=", STYLE_OP),
-                        d("0"), d("."), k("=", "=", STYLE_OP), k("+", "+", STYLE_OP)},
-                {k("(", "(", STYLE_FUNC), k(")", ")", STYLE_FUNC), k("y", "y", STYLE_OP),
-                        k(",", ",", STYLE_OP), k("e", "e", STYLE_FUNC), k("^", "^", STYLE_OP)}
+        // The arrangement mirrors a pocket calculator: a template column, a
+        // symbol column, a 3x4 number pad and an operator column.
+        categories.add(new Category("\u00B1 \u00F7\nx \u00F7", 6, new Key[][]{
+                {k("( )", "(", STYLE_FUNC), k(">", ">", STYLE_OP),
+                        d("7"), d("8"), d("9"), k("\u00F7", "\u00F7", STYLE_OP)},
+                {k("a/b", "()/()", STYLE_FUNC), k("\u221A", "\u221A(", STYLE_FUNC),
+                        d("4"), d("5"), d("6"), k("\u00D7", "\u00D7", STYLE_OP)},
+                {k("x\u00B2", "\u00B2", STYLE_OP), k("x", "x", STYLE_OP),
+                        d("1"), d("2"), d("3"), k("\u2212", "\u2212", STYLE_OP)},
+                {k("\u03C0", "\u03C0", STYLE_FUNC), k("%", "%", STYLE_FUNC),
+                        d("0"), d("."), k("=", "=", STYLE_OP), k("+", "+", STYLE_OP)}
         }));
 
-        categories.add(new Category(R.string.keyboard_vars, 5, new Key[][]{
+        categories.add(new Category("> <\n\u2265 \u2264", 6, new Key[][]{
+                {k(">", ">", STYLE_OP), k("<", "<", STYLE_OP),
+                        k("\u2265", "\u2265", STYLE_OP), k("\u2264", "\u2264", STYLE_OP),
+                        k("\u2260", "\u2260", STYLE_OP), k("=", "=", STYLE_OP)},
                 {k("x", "x", STYLE_OP), k("y", "y", STYLE_OP),
-                        k("x₁", "x1", STYLE_OP), k("x₂", "x2", STYLE_OP),
-                        k("x₃", "x3", STYLE_OP)},
+                        k("\u03C0", "\u03C0", STYLE_FUNC), k("e", "e", STYLE_FUNC),
+                        k(",", ",", STYLE_OP), k("!", "!", STYLE_OP)},
+                {k("(", "(", STYLE_FUNC), k(")", ")", STYLE_FUNC),
+                        k("[", "[", STYLE_FUNC), k("]", "]", STYLE_FUNC),
+                        k("|\u25A1|", "||", STYLE_FUNC), k("a/b", "()/()", STYLE_FUNC)},
+                {d("1"), d("2"), d("3"), d("0"), k(".", ".", STYLE_DIGIT),
+                        k("\u2212", "\u2212", STYLE_OP)}
+        }));
+
+        categories.add(new Category("f(x) e\nlog ln", 6, new Key[][]{
+                {k("\u221A\u25A1", "\u221A(", STYLE_FUNC), k("\u221B\u25A1", "\u221B(", STYLE_FUNC),
+                        k("\u25A1^\u25A1", "^(", STYLE_FUNC), k("x\u00B2", "\u00B2", STYLE_OP),
+                        k("x\u00B3", "\u00B3", STYLE_OP), k("|\u25A1|", "||", STYLE_FUNC)},
+                {k("e\u02E3", "e^(", STYLE_FUNC), k("10\u02E3", "10^(", STYLE_FUNC),
+                        k("ln", "ln(", STYLE_FUNC), k("log", "log(", STYLE_FUNC),
+                        k("log\u2082", "log\u2082(", STYLE_FUNC), k("log\u2081\u2080", "log\u2081\u2080(", STYLE_FUNC)},
+                {k("\u230A\u25A1\u230B", "\u230A\u230B", STYLE_FUNC),
+                        k("\u2308\u25A1\u2309", "\u2308\u2309", STYLE_FUNC),
+                        k("sgn", "sign(", STYLE_FUNC), f("round"), f("mod"),
+                        k("e^\u25A1", "e^(", STYLE_FUNC)},
+                {k("\u03C0", "\u03C0", STYLE_FUNC), k("e", "e", STYLE_FUNC),
+                        k("\u03C6", "\u03C6", STYLE_FUNC), k("\u03C4", "\u03C4", STYLE_FUNC),
+                        f("min"), f("max")}
+        }));
+
+        categories.add(new Category("sin cos\ntan cot", 6, new Key[][]{
+                {f("sin"), f("cos"), f("tan"), f("cot"), f("sec"), f("csc")},
+                {k("arcsin", "arcsin(", STYLE_FUNC), k("arccos", "arccos(", STYLE_FUNC),
+                        k("arctan", "arctan(", STYLE_FUNC), k("arccot", "arccot(", STYLE_FUNC),
+                        k("arcsec", "arcsec(", STYLE_FUNC), k("arccsc", "arccsc(", STYLE_FUNC)},
+                {f("sinh"), f("cosh"), f("tanh"), f("coth"), f("sech"), f("csch")},
+                {k("arsinh", "arsinh(", STYLE_FUNC), k("arcosh", "arcosh(", STYLE_FUNC),
+                        k("artanh", "artanh(", STYLE_FUNC), k("arcoth", "arcoth(", STYLE_FUNC),
+                        k("arsech", "arsech(", STYLE_FUNC), k("arcsch", "arcsch(", STYLE_FUNC)}
+        }));
+
+        categories.add(new Category("lim dx\n\u03A3 \u221E", 6, new Key[][]{
+                {k("d/dx", "d/dx(", STYLE_FUNC), k("\u222B dx", "\u222B(", STYLE_FUNC),
+                        k("x\u00B2", "\u00B2", STYLE_OP), k("x\u00B3", "\u00B3", STYLE_OP),
+                        k("x\u207F", "^", STYLE_OP), k("\u221A\u25A1", "\u221A(", STYLE_FUNC)},
+                {k("e\u02E3", "e^(", STYLE_FUNC), k("10\u02E3", "10^(", STYLE_FUNC),
+                        k("ln", "ln(", STYLE_FUNC), k("log", "log(", STYLE_FUNC),
+                        k("log\u2082", "log\u2082(", STYLE_FUNC), k("|\u25A1|", "||", STYLE_FUNC)},
+                {k("\u2264", "\u2264", STYLE_OP), k("\u2265", "\u2265", STYLE_OP),
+                        k("\u2260", "\u2260", STYLE_OP), k(",", ",", STYLE_OP),
+                        k("!", "!", STYLE_OP), k("%", "%", STYLE_FUNC)},
+                {k("nCr", "ncr(", STYLE_FUNC), k("nPr", "npr(", STYLE_FUNC),
+                        k("gcd", "gcd(", STYLE_FUNC), k("lcm", "lcm(", STYLE_FUNC),
+                        f("min"), f("max")}
+        }));
+
+        categories.add(new Category("| |\n\u230A \u230B", 6, new Key[][]{
+                {k("|\u25A1|", "||", STYLE_FUNC), k("(\u25A1)", "(", STYLE_FUNC),
+                        k("a/b", "()/()", STYLE_FUNC), k("\u25A1^\u25A1", "^(", STYLE_FUNC),
+                        k("\u221A\u25A1", "\u221A(", STYLE_FUNC), k("\u221B\u25A1", "\u221B(", STYLE_FUNC)},
+                {k("\u230A\u25A1\u230B", "\u230A\u230B", STYLE_FUNC),
+                        k("\u2308\u25A1\u2309", "\u2308\u2309", STYLE_FUNC),
+                        k("x\u00B2", "\u00B2", STYLE_OP), k("x\u00B3", "\u00B3", STYLE_OP),
+                        k("x\u207F", "^", STYLE_OP), k("%", "%", STYLE_FUNC)},
+                {k("\u03C0", "\u03C0", STYLE_FUNC), k("e", "e", STYLE_FUNC),
+                        k("\u03C6", "\u03C6", STYLE_FUNC), k("\u03C4", "\u03C4", STYLE_FUNC),
+                        k(",", ",", STYLE_OP), k(".", ".", STYLE_DIGIT)},
+                {k("\u2264", "\u2264", STYLE_OP), k("\u2265", "\u2265", STYLE_OP),
+                        k("\u2260", "\u2260", STYLE_OP), k("=", "=", STYLE_OP),
+                        k("<", "<", STYLE_OP), k(">", ">", STYLE_OP)}
+        }));
+
+        categories.add(new Category("x y\nz", 6, new Key[][]{
+                {k("x", "x", STYLE_OP), k("y", "y", STYLE_OP), k("z", "z", STYLE_OP),
+                        k("x\u2081", "x\u2081", STYLE_OP), k("x\u2082", "x\u2082", STYLE_OP),
+                        k("x\u2083", "x\u2083", STYLE_OP)},
                 {k("a", "a", STYLE_OP), k("b", "b", STYLE_OP), k("c", "c", STYLE_OP),
-                        k("n", "n", STYLE_OP), k("t", "t", STYLE_OP)},
-                {k("k", "k", STYLE_OP), k("m", "m", STYLE_OP), k("r", "r", STYLE_OP),
-                        k("p", "p", STYLE_OP), k("q", "q", STYLE_OP)},
-                {k("x₁²", "x1^2", STYLE_OP), k("x₂²", "x2^2", STYLE_OP),
+                        k("n", "n", STYLE_OP), k("t", "t", STYLE_OP), k("k", "k", STYLE_OP)},
+                {k("m", "m", STYLE_OP), k("r", "r", STYLE_OP), k("p", "p", STYLE_OP),
+                        k("q", "q", STYLE_OP), k("s", "s", STYLE_OP), k("u", "u", STYLE_OP)},
+                {k("x\u2081\u00B2", "x\u2081^2", STYLE_OP), k("x\u2082\u00B2", "x\u2082^2", STYLE_OP),
                         k("(", "(", STYLE_FUNC), k(")", ")", STYLE_FUNC),
-                        k("=", "=", STYLE_OP)},
-                {k("≤", "<=", STYLE_OP), k("≥", ">=", STYLE_OP), k("≠", "!=", STYLE_OP),
-                        k("+", "+", STYLE_OP), k("−", "-", STYLE_OP)},
-                {d("1"), d("2"), d("3"), d("0"), k(",", ",", STYLE_OP)}
-        }));
-
-        categories.add(new Category(R.string.keyboard_functions, 5, new Key[][]{
-                {f("sin"), f("cos"), f("tan"), f("csc"), f("sec")},
-                {f("cot"), k("sin⁻¹", "asin(", STYLE_FUNC), k("cos⁻¹", "acos(", STYLE_FUNC),
-                        k("tan⁻¹", "atan(", STYLE_FUNC), k("cot⁻¹", "acot(", STYLE_FUNC)},
-                {f("sinh"), f("cosh"), f("tanh"), f("csch"), f("sech")},
-                {f("coth"), f("ln"), f("log"), k("log₂", "log2(", STYLE_FUNC), f("exp")},
-                {k("√", "sqrt(", STYLE_FUNC), k("∛", "cbrt(", STYLE_FUNC),
-                        k("ⁿ√", "nthroot(", STYLE_FUNC), k("|x|", "abs(", STYLE_FUNC),
-                        k("eˣ", "e^", STYLE_FUNC)},
-                {k("⌊x⌋", "floor(", STYLE_FUNC), k("⌈x⌉", "ceil(", STYLE_FUNC),
-                        f("round"), f("sign"), f("mod")}
-        }));
-
-        categories.add(new Category(R.string.keyboard_calculus, 5, new Key[][]{
-                {k("d/dx", "nderiv(", STYLE_FUNC), k("∫", "integral(", STYLE_FUNC),
-                        k("xⁿ", "^", STYLE_OP), k("x²", "^2", STYLE_OP), k("x³", "^3", STYLE_OP)},
-                {k("10ˣ", "10^", STYLE_FUNC), k("eˣ", "e^", STYLE_FUNC),
-                        k("√", "sqrt(", STYLE_FUNC), k("∛", "cbrt(", STYLE_FUNC),
-                        k("ⁿ√", "nthroot(", STYLE_FUNC)},
-                {f("ln"), f("log"), k("log₂", "log2(", STYLE_FUNC), f("exp"),
-                        k("|x|", "abs(", STYLE_FUNC)},
-                {k("⌊x⌋", "floor(", STYLE_FUNC), k("⌈x⌉", "ceil(", STYLE_FUNC),
-                        f("round"), f("sign"), f("mod")},
-                {k("≤", "<=", STYLE_OP), k("≥", ">=", STYLE_OP), k("≠", "!=", STYLE_OP),
-                        k("π", "pi", STYLE_FUNC), k("e", "e", STYLE_FUNC)},
-                {k("(", "(", STYLE_FUNC), k(")", ")", STYLE_FUNC), k("[", "[", STYLE_FUNC),
-                        k("]", "]", STYLE_FUNC), k(",", ",", STYLE_OP)}
-        }));
-
-        categories.add(new Category(R.string.keyboard_stats, 4, new Key[][]{
-                {f("mean"), f("median"), f("total"), f("count")},
-                {f("min"), f("max"), f("stdev"), f("stdevp")},
-                {f("var"), f("varp"), f("percentile"), f("cov")},
-                {f("corr"), k("[", "[", STYLE_FUNC), k("]", "]", STYLE_FUNC), k(",", ",", STYLE_OP)},
-                {d("1"), d("2"), d("3"), d("4")},
-                {d("5"), d("6"), d("7"), d("0")}
-        }));
-
-        categories.add(new Category(R.string.keyboard_advanced, 4, new Key[][]{
-                {f("gcd"), f("lcm"), f("mod"), f("nPr")},
-                {f("nCr"), k("!", "!", STYLE_OP), k("⌊x⌋", "floor(", STYLE_FUNC),
-                        k("⌈x⌉", "ceil(", STYLE_FUNC)},
-                {f("round"), f("sign"), k("10ˣ", "10^", STYLE_FUNC), k("eˣ", "e^", STYLE_FUNC)},
-                {k("π", "pi", STYLE_FUNC), k("e", "e", STYLE_FUNC), k("φ", "phi", STYLE_FUNC),
-                        k("τ", "tau", STYLE_FUNC)},
-                {k("(", "(", STYLE_FUNC), k(")", ")", STYLE_FUNC), k("[", "[", STYLE_FUNC),
-                        k("]", "]", STYLE_FUNC)},
-                {k("x", "x", STYLE_OP), k("y", "y", STYLE_OP), k("=", "=", STYLE_OP),
-                        k(",", ",", STYLE_OP)}
+                        k(",", ",", STYLE_OP), k("=", "=", STYLE_OP)}
         }));
     }
 
@@ -273,11 +291,15 @@ public class MathKeyboardView extends LinearLayout {
         for (int i = 0; i < categories.size(); i++) {
             final int index = i;
             TextView tab = new TextView(getContext());
-            tab.setText(categories.get(i).titleRes);
+            tab.setText(categories.get(i).label);
             tab.setGravity(Gravity.CENTER);
             tab.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-            tab.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-            tab.setPadding(dp(14), 0, dp(14), 0);
+            tab.setTextSize(TypedValue.COMPLEX_UNIT_SP, 9);
+            tab.setIncludeFontPadding(false);
+            tab.setSingleLine(false);
+            tab.setMaxLines(2);
+            tab.setTextDirection(TEXT_DIRECTION_LTR);
+            tab.setPadding(dp(11), dp(2), dp(11), dp(2));
             tab.setOnClickListener(v -> showCategory(index));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);

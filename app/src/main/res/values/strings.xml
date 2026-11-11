@@ -47,13 +47,13 @@
 
     <string name="empty_title">لا توجد معادلات بعد</string>
     <string name="empty_subtitle">أضف معادلة يدويًا أو استخرجها من صورة</string>
-    <string name="equation_hint">مثال: y = x^2 - 4</string>
+    <string name="equation_hint">مثال: y = x² − 4</string>
     <string name="invalid_equation">معادلة غير صالحة</string>
     <string name="not_plottable">سيُحفظ النص كما هو، لكنه لن يُرسم حتى يكتمل</string>
     <string name="equation_label">معادلة</string>
     <string name="equations_panel">المعادلات</string>
     <string name="back">رجوع</string>
-    <string name="dialog_examples">أمثلة:  y = x^2  •  y = 3 sin(x)  •  x^2 + y^2 = 25  •  y &gt; x</string>
+    <string name="dialog_examples">أمثلة:  y = x²  •  y = 3 sin(x)  •  x² + y² = 25  •  y &gt; x</string>
     <string name="preparing_ocr">جارٍ تهيئة محرك قراءة النصوص…</string>
     <string name="ocr_init_failed">تعذر تهيئة محرك قراءة النصوص</string>
     <string name="visible">إظهار</string>
@@ -62,14 +62,14 @@
     <string name="capture_photo">التقاط صورة</string>
     <string name="pick_image">اختيار من المعرض</string>
     <string name="quick_examples">أمثلة سريعة</string>
-    <string name="example_parabola">y = x^2</string>
+    <string name="example_parabola">y = x²</string>
     <string name="example_sine">y = 3 sin(x)</string>
-    <string name="example_circle">x^2 + y^2 = 25</string>
+    <string name="example_circle">x² + y² = 25</string>
     <string name="paragraph_hint">المعادلات المستخرجة تُضاف تلقائيًا إلى القائمة.</string>
 
     <!-- graph settings -->
     <string name="graph_settings">إعدادات الرسم</string>
-    <string name="graph_settings_hint">تحكم في الشبكة والمحاور والمدى ووحدات الزوايا</string>
+    <string name="graph_settings_hint">تحكم في الشبكة والمحاور والمتباينات ومدى العرض</string>
     <string name="section_grid">الشبكة والمحاور</string>
     <string name="opt_grid">إظهار الشبكة</string>
     <string name="opt_minor_grid">الخطوط الشبكية الصغيرة</string>
@@ -77,17 +77,17 @@
     <string name="opt_arrows">الأسهم</string>
     <string name="opt_x_axis">محور X</string>
     <string name="opt_y_axis">محور Y</string>
-    <string name="section_vars">المتغيرات</string>
-    <string name="opt_pretty_vars">كتابة X₁ و X₂ برموز سفلية</string>
+    <string name="section_calc">المتباينات والملاءمة</string>
+    <string name="opt_shade">تظليل منطقة المتباينة</string>
+    <string name="opt_autofit">ملاءمة العرض تلقائيًا عند تغيير المعادلات</string>
     <string name="section_window">مدى العرض</string>
     <string name="apply_window">تطبيق المدى</string>
     <string name="window_invalid">مدى غير صالح</string>
     <string name="section_units">وحدات الزوايا</string>
     <string name="radians">راديان</string>
     <string name="degrees">درجات</string>
-    <string name="section_display">العرض</string>
-    <string name="opt_projector">وضع العرض المكبّر</string>
     <string name="reset_defaults">الافتراضي</string>
+    <string name="settings_footer">منحنى %1$s • صُنع بالذكاء الاصطناعي</string>
 
     <!-- keyboard -->
     <string name="keyboard_basic">أساسي</string>

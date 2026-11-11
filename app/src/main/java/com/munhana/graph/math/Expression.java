@@ -388,12 +388,22 @@ public final class Expression {
     /** Normalises unicode math glyphs and Arabic-Indic digits into ASCII. */
     public static String normalize(String in) {
         if (in == null) return "";
+        // Symbolic operators typed from the maths keyboard (or stored in a
+        // pretty equation) are folded back to plain ASCII before parsing.
+        in = in.replace("d/dx(", "nderiv(")
+               .replace("\u222b(", "integral(")
+               .replace("\u222b", "integral(")
+               .replace("\u222c", "integral(integral(")
+               .replace("\u220f", "product(")
+               .replace("\u2211", "sum(")
+               .replace("sgn(", "sign(");
         StringBuilder sb = new StringBuilder(in.length());
         for (int i = 0; i < in.length(); i++) {
             char ch = in.charAt(i);
             if (ch >= '\u0660' && ch <= '\u0669') { sb.append((char) ('0' + ch - '\u0660')); continue; }
             if (ch >= '\u06F0' && ch <= '\u06F9') { sb.append((char) ('0' + ch - '\u06F0')); continue; }
             if (ch >= '\u0966' && ch <= '\u096F') { sb.append((char) ('0' + ch - '\u0966')); continue; }
+            if (ch >= '\u2080' && ch <= '\u2089') { sb.append((char) ('0' + ch - '\u2080')); continue; }
             switch (ch) {
                 case '\u2212': case '\u2013': case '\u2014': case '\u2010': case '\u2011':
                 case '\u2012': case '\uFE63': case '\uFF0D':
@@ -403,7 +413,14 @@ public final class Expression {
                 case '\u00F7': case '\u2215': case '\uFF0F':
                     sb.append('/'); break;
                 case '\u221A': sb.append("sqrt"); break;
+                case '\u221B': sb.append("cbrt"); break;
+                case '\u230A': sb.append("floor("); break;
+                case '\u2308': sb.append("ceil("); break;
+                case '\u230B': case '\u2309': sb.append(')'); break;
+                case '\u0025': sb.append("/100"); break;
                 case '\u03C0': sb.append("pi"); break;
+                case '\u03C4': sb.append("tau"); break;
+                case '\u03C6': sb.append("phi"); break;
                 case '\u00B2': sb.append("^2"); break;
                 case '\u00B3': sb.append("^3"); break;
                 case '\u00B9': sb.append("^1"); break;
@@ -423,6 +440,30 @@ public final class Expression {
                     sb.append(','); break;
                 case '\u00A0': case '\u200F': case '\u200E': case '\u061C':
                     break;
+                case '\u02E3': sb.append("^x"); break;
+                case '\u02B8': sb.append("^y"); break;
+                case '\u207F': sb.append("^n"); break;
+                case '\u1D43': sb.append("^a"); break;
+                case '\u1D47': sb.append("^b"); break;
+                case '\u1D9C': sb.append("^c"); break;
+                case '\u1D48': sb.append("^d"); break;
+                case '\u1D49': sb.append("^e"); break;
+                case '\u1D4D': sb.append("^g"); break;
+                case '\u02B0': sb.append("^h"); break;
+                case '\u2071': sb.append("^i"); break;
+                case '\u02B2': sb.append("^j"); break;
+                case '\u1D4F': sb.append("^k"); break;
+                case '\u02E1': sb.append("^l"); break;
+                case '\u1D50': sb.append("^m"); break;
+                case '\u1D52': sb.append("^o"); break;
+                case '\u1D56': sb.append("^p"); break;
+                case '\u02B3': sb.append("^r"); break;
+                case '\u02E2': sb.append("^s"); break;
+                case '\u1D57': sb.append("^t"); break;
+                case '\u1D58': sb.append("^u"); break;
+                case '\u1D5B': sb.append("^v"); break;
+                case '\u02B7': sb.append("^w"); break;
+                case '\u1DBB': sb.append("^z"); break;
                 case '\u007C': case '\u2223':
                     sb.append('|'); break;
                 default:
