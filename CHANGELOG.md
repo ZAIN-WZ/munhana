@@ -16,7 +16,7 @@
   and the panel ends with the version and "Built with AI".
 - Auto-fit frames all curves whenever an equation is added, edited, deleted or
   imported; pan and zoom stay manual afterwards.
-- Fine, crisp curves with a soft glow, matching the calculator look.
+- Thin, crisp curve strokes (1.7dp, no halo) so curves stay sharp.
 - Offline download mirrors (jsDelivr, Statically, GitHub Pages) for 1.2, 1.1
   and 1.0, so the APK downloads in Syria without a VPN.
 
@@ -51,7 +51,7 @@
   الإصدار وعبارة «صُنع بالذكاء الاصطناعي».
 - ملاءمة تلقائية تُظهر كل المنحنيات عند إضافة معادلة أو تعديلها أو حذفها أو
   استيرادها، ويبقى التكبير والتحريك بيدك بعد ذلك.
-- خطوط رفيعة وواضحة مع توهّج خفيف، بمظهر نظيف كالآلة الحاسبة.
+- خطوط رفيعة وواضحة (1.7dp، بلا هالة) لتبقى المنحنيات حادة.
 - روابط تحميل بديلة (jsDelivr و Statically و GitHub Pages) للإصدارات 1.2
   و 1.1 و 1.0، ليعمل التحميل في سوريا بدون VPN.
 

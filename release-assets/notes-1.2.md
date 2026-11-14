@@ -11,7 +11,7 @@
   the panel shows the version and "Built with AI".
 - Auto-fit frames all curves whenever an equation is added, edited, deleted or
   imported; pan and zoom remain fully manual afterwards.
-- Fine, crisp curve strokes with a soft glow that matches the calculator look.
+- Thin, crisp curve strokes (1.7dp, no halo) so curves stay sharp.
 - Download without a VPN from Syria: jsDelivr, Statically and GitHub Pages
   mirrors for 1.2, 1.1 and 1.0 (see the README table).
 - APK: `munhana-1.2.apk`
@@ -31,7 +31,7 @@
   أسفل النافذة رقم الإصدار وعبارة «صُنع بالذكاء الاصطناعي».
 - ملاءمة تلقائية تُظهر كل المنحنيات عند إضافة معادلة أو تعديلها أو حذفها أو
   استيرادها، ويبقى التكبير والتحريك بيدك بعد ذلك.
-- خطوط رفيعة وواضحة مع توهّج خفيف، بمظهر نظيف كالآلة الحاسبة.
+- خطوط رفيعة وواضحة (1.7dp، بلا هالة) لتبقى المنحنيات حادة.
 - التحميل بدون VPN من سوريا: روابط jsDelivr و Statically و GitHub Pages
   للإصدارات 1.2 و 1.1 و 1.0 (جدول في README وصفحة التحميل).
 - ملف التثبيت: `munhana-1.2.apk`

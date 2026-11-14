@@ -38,7 +38,6 @@ public class GraphView extends View {
     private final Paint axisPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint labelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint curvePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint glowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint shadePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
@@ -74,15 +73,13 @@ public class GraphView extends View {
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setStrokeWidth(1f);
 
+        // Thin, crisp strokes: a narrow core with no wide glow, so the curve
+        // reads as a precise line instead of a soft band.
         curvePaint.setStyle(Paint.Style.STROKE);
-        curvePaint.setStrokeWidth(2f * density);
+        curvePaint.setStrokeWidth(1.7f * density);
         curvePaint.setStrokeCap(Paint.Cap.ROUND);
         curvePaint.setStrokeJoin(Paint.Join.ROUND);
-
-        glowPaint.setStyle(Paint.Style.STROKE);
-        glowPaint.setStrokeWidth(4.8f * density);
-        glowPaint.setStrokeCap(Paint.Cap.ROUND);
-        glowPaint.setAlpha(18);
+        curvePaint.setAntiAlias(true);
 
         shadePaint.setStyle(Paint.Style.FILL);
         shadePaint.setAlpha(26);
@@ -435,7 +432,6 @@ public class GraphView extends View {
 
     private void drawEquation(Canvas canvas, Equation eq, int w, int h) {
         curvePaint.setColor(eq.color);
-        glowPaint.setColor(eq.color);
 
         switch (eq.kind) {
             case FUNCTION:
@@ -459,7 +455,7 @@ public class GraphView extends View {
         curvePath.reset();
         boolean started = false;
         double prevY = 0;
-        double stepPx = 1.0;    // 1px columns
+        double stepPx = 0.75;   // sub-pixel columns keep thin lines smooth
         for (float sx = 0; sx <= w; sx += stepPx) {
             double wx = screenToWorldX(sx);
             double wy;
@@ -475,7 +471,6 @@ public class GraphView extends View {
             }
             prevY = wy;
         }
-        canvas.drawPath(curvePath, glowPaint);
         canvas.drawPath(curvePath, curvePaint);
     }
 
@@ -484,7 +479,6 @@ public class GraphView extends View {
         double v = eq.fn.eval(0, 0);
         if (Double.isNaN(v) || Double.isInfinite(v)) return;
         float sx = worldToScreenX(v);
-        canvas.drawLine(sx, 0, sx, h, glowPaint);
         canvas.drawLine(sx, 0, sx, h, curvePaint);
     }
 
@@ -533,7 +527,6 @@ public class GraphView extends View {
                 }
             }
         }
-        canvas.drawPath(curvePath, glowPaint);
         canvas.drawPath(curvePath, curvePaint);
     }
 
